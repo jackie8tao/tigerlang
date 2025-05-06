@@ -107,3 +107,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# macos index file
+.DS_Store
