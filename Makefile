@@ -1,11 +1,14 @@
 ROOTDIR := $(shell pwd)
+PROJ := tiger
+
+$(info project name: $(PROJ))
 $(info root directory: $(ROOTDIR))
 
-export ROOTDIR
+export ROOTDIR PROJ
 
-.PHOMY: tiger clean
 tiger:
-	$(MAKE) -C src $@
+	@$(MAKE) -C src $@
 
+.PHONY: clean
 clean: 
-	$(MAKE) -C src $@
+	@rm -rf $(PROJ) && $(MAKE) -C src $@

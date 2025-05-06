@@ -1,8 +1,15 @@
-PROJ := tiger
+ifndef ROOTDIR
+$(error variable ROOTDIR is not defined)
+endif
+
+ifndef PROJ
+$(error variable PROJ is not defined)
+endif
+
 
 CC := gcc
 CFLAGS := -c -I $(ROOTDIR)/include
-LDFLAGS :=
+LDFLAGS := 
 
 LEX := lex
 LEXFLAGS := 
@@ -10,7 +17,7 @@ LEXFLAGS :=
 OBJS := lex.yy.o main.o
 
 tiger: lex $(OBJS)
-	$(CC) $(LDFLAGS) -o $(PROJ) $(OBJS)
+	$(CC) $(LDFLAGS) -o $(ROOTDIR)/$(PROJ) $(OBJS)
 
 .PHONY: lex
 lex: 
