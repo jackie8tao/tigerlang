@@ -9,13 +9,13 @@ endif
 INCLUDEDIR := $(ROOTDIR)/include
 
 CC := gcc
-CFLAGS := -c -I $(INCLUDEDIR)
-LDFLAGS := 
+CFLAGS := -c -I $(INCLUDEDIR) -g
+LDFLAGS := -g
 
 LEX := flex
 LEXFLAGS := --header-file="$(INCLUDEDIR)/yylex.h"
 
-OBJS := lex.yy.o main.o
+OBJS := lex.yy.o symtable.o main.o
 
 tiger: lex $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ROOTDIR)/$(PROJ) $(OBJS)

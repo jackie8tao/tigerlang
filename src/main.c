@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <yylex.h>
 #include <token.h>
+#include <symtable.h>
 
 // print error message
 void errmsg(const char *format, ...)
@@ -21,9 +22,31 @@ void errmsg(const char *format, ...)
   return;
 }
 
+void print_lex_tokens(FILE *fp)
+{
+  yyin = fp;
+  int token;
+  while ((token = yylex()) > 0)
+  {
+    printf("line: %d, value: \"%s\"\r\n", yylineno, yytext);
+  }
+  return;
+}
+
+void print_sym_table(FILE *fp)
+{
+  yyin = fp;
+  int token;
+  while ((token = yylex()) > 0)
+    ;
+  sym_table_show();
+  return;
+}
+
 // read input files, then print result
 int main(int argc, char **argv)
 {
+  sym_table_init();
   if (argc < 2)
   {
     perror("empyt input files");
@@ -39,14 +62,8 @@ int main(int argc, char **argv)
       errmsg("cannot open file %s", argv[i]);
       return -2;
     }
-    yyin = fp;
-
-    int token;
-    while ((token = yylex()) > 0)
-    {
-      printf("line: %d, value: \"%s\"\r\n", yylineno, yytext);
-    }
+    print_sym_table(fp);
   }
 
-  return 0;
+  return 1;
 }

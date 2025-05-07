@@ -3,6 +3,8 @@
 #include <tigerdef.h>
 #include <string.h>
 #include <stdio.h>
+#include <symtable.h>
+#include <stdlib.h>
 
 char tiger_str[MAX_STR_SIZE];
 int tiger_str_leng;
@@ -53,17 +55,17 @@ newline [\n|\r|\r\n]
     yytext = strdup(tiger_str);
     BEGIN(INITIAL);
     return TK_STRING;
-}
+    }
 
 <STR>"\\[n|t|\"|\\]*" {
     tiger_str_append(yytext, yyleng);
     tiger_str_leng += yyleng;
-}
+    }
 
 <STR>[^\"]* {
     tiger_str_append(yytext, yyleng);
     tiger_str_leng += yyleng;
-}
+    }
 
 {ws} {;}
 {newline} { yylineno++; }
@@ -109,7 +111,15 @@ newline [\n|\r|\r\n]
 & { return TK_AND; }
 '|' { return TK_OR; }
 := { return TK_ASSIGN; }
-{ident} { return TK_IDENT; }
+
+{ident} {
+    sym_entry_t* entry = (sym_entry_t*)malloc(sizeof(sym_entry_t));
+    entry->type = TK_IDENT;
+    entry->token = strdup(yytext);
+    entry->lineno = yylineno;
+    sym_table_append(entry);
+    return TK_IDENT; 
+    }
 
 %%
 
