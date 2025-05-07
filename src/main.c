@@ -28,7 +28,7 @@ void print_lex_tokens(FILE *fp)
   int token;
   while ((token = yylex()) > 0)
   {
-    printf("line: %d, value: \"%s\"\r\n", yylineno, yytext);
+    printf("line: %d, value: \"%s\", type: %d\n", yylineno, yytext, token);
   }
   return;
 }

@@ -466,7 +466,7 @@ extern int yylex (void);
 #undef yyTABLES_NAME
 #endif
 
-#line 124 "lex.l"
+#line 122 "lex.l"
 
 
 #line 472 "/Users/taodingfei/Dev/tigerlang/include/yylex.h"

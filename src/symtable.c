@@ -28,7 +28,7 @@ void sym_table_append(sym_entry_t *entry)
     }
 
     // forbid appending the same token;
-    if (!sym_table_find(entry->token))
+    if (sym_table_find(entry->token))
         return;
 
     sym_entry_t *cur = _symtable->head;
@@ -101,6 +101,8 @@ void sym_table_show()
         printf("empty symbol table");
         return;
     }
+
+    printf("\n");
 
     sym_entry_t *cur = _symtable->head;
     int pos = 0;

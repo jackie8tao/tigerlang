@@ -66,31 +66,30 @@ newline [\n|\r|\r\n]
     tiger_str_append(yytext, yyleng);
     tiger_str_leng += yyleng;
     }
-
 {ws} {;}
 {newline} { yylineno++; }
 {integer} { return TK_INTEGER; }
 {comment} {;}
-'array' { return TK_ARRAY; }
-'break' { return TK_BREAK; }
-'do' { return TK_DO; }
-'else' { return TK_ELSE; }
-'end' { return TK_END; }
-'for' { return TK_FOR; }
-'function' { return TK_FUNCTION; }
-'if' { return TK_IF; }
-'in' { return TK_IN; }
-'let' { return TK_LET; }
-'nil' { return TK_NIL; }
-'of' { return TK_OF; }
-'then' { return TK_THEN; }
-'to' { return TK_TO; }
-'type' { return TK_TYPE; }
-'var' { return TK_VAR; }
-'while' { return TK_WHILE; }
-',' { return TK_COMMA; }
-':' { return TK_COLON; }
-';' { return TK_SEMICOLON; }
+array { return TK_ARRAY; }
+break { return TK_BREAK; }
+do { return TK_DO; }
+else { return TK_ELSE; }
+end { return TK_END; }
+for { return TK_FOR; }
+function { return TK_FUNCTION; }
+if { return TK_IF; }
+in { return TK_IN; }
+let { return TK_LET; }
+nil { return TK_NIL; }
+of { return TK_OF; }
+then { return TK_THEN; }
+to { return TK_TO; }
+type { return TK_TYPE; }
+var { return TK_VAR; }
+while { return TK_WHILE; }
+, { return TK_COMMA; }
+: { return TK_COLON; }
+; { return TK_SEMICOLON; }
 \( { return TK_LPAREN; }
 \) { return TK_RPAREN; }
 \[ { return TK_LBRACKET; }
@@ -111,7 +110,6 @@ newline [\n|\r|\r\n]
 & { return TK_AND; }
 '|' { return TK_OR; }
 := { return TK_ASSIGN; }
-
 {ident} {
     sym_entry_t* entry = (sym_entry_t*)malloc(sizeof(sym_entry_t));
     entry->type = TK_IDENT;
