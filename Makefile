@@ -6,7 +6,12 @@ $(info root directory: $(ROOTDIR))
 
 export ROOTDIR PROJ
 
+.PHONY: tiger
 tiger:
+	@$(MAKE) -C src $@
+
+.PHONY: lex
+lex:
 	@$(MAKE) -C src $@
 
 .PHONY: clean

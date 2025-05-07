@@ -6,13 +6,14 @@ ifndef PROJ
 $(error variable PROJ is not defined)
 endif
 
+INCLUDEDIR := $(ROOTDIR)/include
 
 CC := gcc
-CFLAGS := -c -I $(ROOTDIR)/include
+CFLAGS := -c -I $(INCLUDEDIR)
 LDFLAGS := 
 
-LEX := lex
-LEXFLAGS := 
+LEX := flex
+LEXFLAGS := --header-file="$(INCLUDEDIR)/yylex.h"
 
 OBJS := lex.yy.o main.o
 
@@ -25,7 +26,7 @@ lex:
 
 .PHONY: clean
 clean: 
-	rm -rf $(PROJ) $(OBJS) lex.yy.c
+	rm -rf $(PROJ) $(OBJS)
 
 $(OBJS): %.o: %.c
 	$(CC) $(CFLAGS) -o $@ $^
