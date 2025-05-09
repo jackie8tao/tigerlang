@@ -33,13 +33,14 @@ typedef enum token
     TK_COMMA,     // ,
     TK_COLON,     // :
     TK_SEMICOLON, // ;
-    TK_LPAREN,    // (
-    TK_RPAREN,    // )
-    TK_LBRACKET,  // [
-    TK_RBRACKET,  // ]
-    TK_LBRACE,    // {
-    TK_RBRACE,    // }
-    TK_DOT,       // .
+
+    TK_LPAREN,   // (
+    TK_RPAREN,   // )
+    TK_LBRACKET, // [
+    TK_RBRACKET, // ]
+    TK_LBRACE,   // {
+    TK_RBRACE,   // }
+    TK_DOT,      // .
 
     TK_PLUS,  // +
     TK_MINUS, // -
