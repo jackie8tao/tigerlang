@@ -9,7 +9,6 @@
 void yyerror(const char* msg)
 {
     errmsg(msg);
-    // errmsg("lineno: %d, text: %s\n", yylineno, yytext);
     exit(ERR_YACC);
 }
 %}
@@ -40,22 +39,23 @@ void yyerror(const char* msg)
 %define parse.error detailed
 %define parse.trace
 
-%precedence TK_AND TK_OR
-%precedence TK_EQU TK_NEQU TK_GT TK_GEQU TK_LT TK_LEQU
+%nonassoc TK_AND TK_OR
+%nonassoc TK_EQU TK_NEQU TK_GT TK_GEQU TK_LT TK_LEQU
 %left TK_MULTI TK_DIV TK_MINUS TK_PLUS
 %right UMINUS
-%precedence MAXPRIV
+%precedence PREFER
 
 %%
 
-expr: primaryexpr exprsfx;
+expr: primaryexpr exprsfx
+    ;
 
 exprsfx: binoper expr
     | /* epsilon */
     ;
 
-primaryexpr: TK_STRING
-    | TK_INTEGER
+primaryexpr: TK_STRING  {printf("\"%s\"\n", $<sval>1);}
+    | TK_INTEGER {printf("%d\n", $<ival>1);}
     | TK_NIL
     | lvalue
     | TK_MINUS expr %prec UMINUS
@@ -144,8 +144,8 @@ typefield: TK_IDENT TK_COLON TK_IDENT
     ;
 
 binoper: TK_PLUS
-    | TK_MINUS
     | TK_MULTI
+    | TK_MINUS
     | TK_DIV
     | TK_EQU
     | TK_NEQU

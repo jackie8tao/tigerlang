@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
-# define YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
+#ifndef YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
+# define YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -98,7 +98,7 @@ extern int yydebug;
     TK_INTEGER = 299,              /* TK_INTEGER  */
     TK_STRING = 300,               /* TK_STRING  */
     UMINUS = 301,                  /* UMINUS  */
-    MAXPRIV = 302                  /* MAXPRIV  */
+    PREFER = 302                   /* PREFER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -107,13 +107,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 27 "parser.y"
+#line 26 "parser.y"
 
     char* sym;
     int ival;
     char* sval;
 
-#line 117 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
+#line 117 "/home/jackietao/dev/tigerlang/include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -128,4 +128,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED  */

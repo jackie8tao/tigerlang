@@ -79,11 +79,10 @@
 void yyerror(const char* msg)
 {
     errmsg(msg);
-    // errmsg("lineno: %d, text: %s\n", yylineno, yytext);
     exit(ERR_YACC);
 }
 
-#line 87 "parser.tab.c"
+#line 86 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -158,7 +157,7 @@ enum yysymbol_kind_t
   YYSYMBOL_TK_INTEGER = 44,                /* TK_INTEGER  */
   YYSYMBOL_TK_STRING = 45,                 /* TK_STRING  */
   YYSYMBOL_UMINUS = 46,                    /* UMINUS  */
-  YYSYMBOL_MAXPRIV = 47,                   /* MAXPRIV  */
+  YYSYMBOL_PREFER = 47,                    /* PREFER  */
   YYSYMBOL_YYACCEPT = 48,                  /* $accept  */
   YYSYMBOL_expr = 49,                      /* expr  */
   YYSYMBOL_exprsfx = 50,                   /* exprsfx  */
@@ -572,7 +571,7 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    51,    51,    53,    54,    57,    58,    59,    60,    61,
+       0,    50,    50,    53,    54,    57,    58,    59,    60,    61,
       62,    63,    64,    65,    66,    67,    68,    69,    70,    71,
       72,    76,    77,    80,    81,    84,    85,    88,    89,    92,
       95,    96,    99,   102,   103,   106,   107,   110,   111,   114,
@@ -602,7 +601,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "TK_LBRACKET", "TK_RBRACKET", "TK_LBRACE", "TK_RBRACE", "TK_DOT",
   "TK_PLUS", "TK_MINUS", "TK_MULTI", "TK_DIV", "TK_EQU", "TK_NEQU",
   "TK_LT", "TK_LEQU", "TK_GT", "TK_GEQU", "TK_AND", "TK_OR", "TK_ASSIGN",
-  "TK_IDENT", "TK_INTEGER", "TK_STRING", "UMINUS", "MAXPRIV", "$accept",
+  "TK_IDENT", "TK_INTEGER", "TK_STRING", "UMINUS", "PREFER", "$accept",
   "expr", "exprsfx", "primaryexpr", "exprseq", "exprseqsfx", "exprlist",
   "exprlistsfx", "fieldlist", "fieldlistsfx", "lvalue", "indexlist",
   "index", "declist", "dec", "typedec", "typeval", "vardec", "funcdec",
@@ -650,7 +649,7 @@ static const yytype_int8 yydefact[] =
        0,     7,    38,     0,    19,     0,     0,    22,     0,    34,
        6,     5,     0,     4,     8,     0,     0,     0,     0,    38,
       39,    40,    41,     0,     0,     0,    24,     0,     9,    26,
-       0,     0,     0,    32,    34,     1,    55,    56,    57,    58,
+       0,     0,     0,    32,    34,     1,    55,    57,    56,    58,
       59,    60,    61,    63,    62,    64,    65,    66,     2,     0,
        0,     0,     0,     0,    22,    37,     0,     0,     0,     0,
       21,    12,    28,     0,     0,     0,     0,    35,     0,    33,
@@ -1443,8 +1442,20 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 5: /* primaryexpr: TK_STRING  */
+#line 57 "parser.y"
+                        {printf("\"%s\"\n", (yyvsp[0].sval));}
+#line 1449 "parser.tab.c"
+    break;
 
-#line 1448 "parser.tab.c"
+  case 6: /* primaryexpr: TK_INTEGER  */
+#line 58 "parser.y"
+                 {printf("%d\n", (yyvsp[0].ival));}
+#line 1455 "parser.tab.c"
+    break;
+
+
+#line 1459 "parser.tab.c"
 
       default: break;
     }

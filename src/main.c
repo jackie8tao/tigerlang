@@ -15,8 +15,6 @@ int main(int argc, char **argv)
     return ERR_ARGS;
   }
 
-  yydebug=1;
-
   FILE *fp;
   for (int i = 1; i < argc; i++)
   {
@@ -27,12 +25,6 @@ int main(int argc, char **argv)
       return ERR_SYSTEM;
     }
     yyin = fp;
-
-    // int yytype;
-    // while((yytype = yylex()) > 0)
-    // {
-    //   printf("yytext: %s, yylineno: %d, yytype: %d\n", yytext, yylineno, yytype);
-    // }
 
     int errcode;
     if ((errcode = yyparse()) > 0)

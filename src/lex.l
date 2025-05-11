@@ -53,6 +53,7 @@ newline [\n|\r|\r\n]
 <STR>\" {
     yyleng = tiger_str_leng;
     yytext = strdup(tiger_str);
+    yylval.sval = strdup(tiger_str);
     BEGIN(INITIAL);
     return TK_STRING;
     }
@@ -68,7 +69,7 @@ newline [\n|\r|\r\n]
     }
 {ws} {;}
 {newline} { yylineno++; }
-{integer} { return TK_INTEGER; }
+{integer} { yylval.ival = atoi(yytext); return TK_INTEGER; }
 {comment} {;}
 array { return TK_ARRAY; }
 break { return TK_BREAK; }
