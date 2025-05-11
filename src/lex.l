@@ -1,5 +1,5 @@
 %{
-#include <token.h>
+#include <parser.h>
 #include <tigerdef.h>
 #include <string.h>
 #include <stdio.h>
@@ -36,7 +36,7 @@ static void tiger_str_append(const char* src, int length)
 
 ident [[:alpha:]]+([[:alpha:]]|[[:digit:]]|_)*
 integer [[:digit:]]+
-ws  [:space:]+
+ws  [[:space:]]+
 comment (\/\*).*(\*\/)
 newline [\n|\r|\r\n]
 
@@ -88,6 +88,7 @@ type { return TK_TYPE; }
 var { return TK_VAR; }
 while { return TK_WHILE; }
 , { return TK_COMMA; }
+:= { return TK_ASSIGN; }
 : { return TK_COLON; }
 ; { return TK_SEMICOLON; }
 \( { return TK_LPAREN; }
@@ -109,7 +110,6 @@ while { return TK_WHILE; }
 \>= { return TK_GEQU; }
 & { return TK_AND; }
 '|' { return TK_OR; }
-:= { return TK_ASSIGN; }
 {ident} {
     sym_entry_t* entry = (sym_entry_t*)malloc(sizeof(sym_entry_t));
     entry->type = TK_IDENT;

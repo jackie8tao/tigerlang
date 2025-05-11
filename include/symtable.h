@@ -1,11 +1,11 @@
 #ifndef __SYMTABLE_H
 #define __SYMTABLE_H
 
-#include <token.h>
+#include <parser.h>
 
 typedef struct sym_entry {
     char* token;
-    token_t type;
+    yytoken_kind_t type;
     int lineno;
     struct sym_entry* next;
 } sym_entry_t;

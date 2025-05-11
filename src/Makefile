@@ -13,16 +13,23 @@ CFLAGS := -c -I $(INCLUDEDIR) -g
 LDFLAGS := -g
 
 LEX := flex
-LEXFLAGS := --header-file="$(INCLUDEDIR)/yylex.h"
+LEXFLAGS := --header-file=$(INCLUDEDIR)/lex.h 
 
-OBJS := lex.yy.o symtable.o main.o
+YACC := bison
+YACCFLAGS := --header=$(INCLUDEDIR)/parser.h
 
-tiger: lex $(OBJS)
+OBJS := lex.yy.o parser.tab.o stuff.o symtable.o main.o
+
+tiger: lex yacc $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ROOTDIR)/$(PROJ) $(OBJS)
 
 .PHONY: lex
 lex: 
 	$(LEX) $(LEXFLAGS) lex.l
+
+.PHONY: yacc
+yacc: 
+	$(YACC) $(YACCFLAGS) parser.y
 
 .PHONY: clean
 clean: 
