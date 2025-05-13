@@ -575,13 +575,13 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    58,    58,    69,    74,    77,    78,    79,    80,    81,
-      82,    83,    84,    85,    86,    87,    88,    89,    90,    91,
-      92,    96,    97,   100,   101,   104,   105,   108,   109,   112,
-     115,   116,   119,   122,   123,   126,   127,   130,   131,   134,
-     135,   136,   139,   142,   143,   144,   147,   148,   149,   152,
-     153,   156,   157,   160,   161,   164,   165,   168,   171,   172,
-     173,   174,   175,   176,   177,   178,   179,   180,   181,   182
+       0,    70,    70,    75,    80,    85,    86,    87,    88,    89,
+      93,    98,   101,   102,   103,   104,   105,   106,   107,   108,
+     109,   113,   114,   117,   118,   121,   122,   125,   126,   129,
+     132,   133,   136,   139,   140,   143,   144,   147,   148,   151,
+     152,   153,   156,   159,   160,   161,   164,   165,   166,   169,
+     170,   173,   174,   177,   178,   181,   182,   185,   188,   189,
+     190,   191,   192,   193,   194,   195,   196,   197,   198,   199
 };
 #endif
 
@@ -1448,115 +1448,223 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* expr: primaryexpr exprsfx  */
-#line 58 "parser.y"
+#line 70 "parser.y"
                           {
-    stxnode_t* sfxnode = (yyvsp[0].astnode);
-    if (!sfxnode) {
-        (yyval.astnode) = (yyvsp[-1].astnode);
-    } else {
-        stxnode_t* prinode = (yyvsp[-1].astnode);
-        *prinode->children + (prinode->count - 1) * sizeof(stxnode_t*) = sfxnode;
-    }
+    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
+    (yyval.astnode) = (yyvsp[-1].astnode);
 }
-#line 1462 "parser.tab.c"
+#line 1457 "parser.tab.c"
     break;
 
   case 3: /* exprsfx: binoper expr  */
-#line 69 "parser.y"
+#line 75 "parser.y"
                       { 
     stxnode_t* opnode = (yyvsp[-1].astnode);
-    (*opnode->children)[1] = (yyvsp[0].astnode);
+    stxtree_append_node(opnode, (yyvsp[0].astnode));
     (yyval.astnode) = opnode;
  }
-#line 1472 "parser.tab.c"
+#line 1467 "parser.tab.c"
+    break;
+
+  case 4: /* exprsfx: %empty  */
+#line 80 "parser.y"
+                    {
+        (yyval.astnode) = NULL;
+    }
+#line 1475 "parser.tab.c"
     break;
 
   case 5: /* primaryexpr: TK_STRING  */
-#line 77 "parser.y"
-                        {printf("\"%s\"\n", (yyvsp[0].sval));}
-#line 1478 "parser.tab.c"
+#line 85 "parser.y"
+                        { (yyval.astnode) = stxtree_create_string_node((yyvsp[0].sval)); }
+#line 1481 "parser.tab.c"
     break;
 
   case 6: /* primaryexpr: TK_INTEGER  */
-#line 78 "parser.y"
-                 {printf("%d\n", (yyvsp[0].ival));}
-#line 1484 "parser.tab.c"
+#line 86 "parser.y"
+                 { (yyval.astnode) = stxtree_create_integer_node((yyvsp[0].ival)); }
+#line 1487 "parser.tab.c"
     break;
 
-  case 58: /* binoper: TK_PLUS  */
-#line 171 "parser.y"
-                 { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
-#line 1490 "parser.tab.c"
+  case 7: /* primaryexpr: TK_NIL  */
+#line 87 "parser.y"
+             { (yyval.astnode) = stxtree_create_nil_node(); }
+#line 1493 "parser.tab.c"
     break;
 
-  case 59: /* binoper: TK_MULTI  */
-#line 172 "parser.y"
-               { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
-#line 1496 "parser.tab.c"
-    break;
-
-  case 60: /* binoper: TK_MINUS  */
-#line 173 "parser.y"
-               { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 9: /* primaryexpr: TK_MINUS expr  */
+#line 89 "parser.y"
+                                 { 
+        stxnode_t* msnode = stxtree_create_unary_minus_node();
+        stxtree_append_node(msnode, (yyvsp[0].astnode));
+    }
 #line 1502 "parser.tab.c"
     break;
 
-  case 61: /* binoper: TK_DIV  */
-#line 174 "parser.y"
-             { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
-#line 1508 "parser.tab.c"
+  case 10: /* primaryexpr: lvalue TK_ASSIGN expr  */
+#line 93 "parser.y"
+                            {
+        stxnode_t* assnode = stxtree_create_assign_node();
+        stxtree_append_node(assnode, (yyvsp[-2].astnode));
+        stxtree_append_node(assnode, (yyvsp[0].astnode));
+    }
+#line 1512 "parser.tab.c"
     break;
 
-  case 62: /* binoper: TK_EQU  */
-#line 175 "parser.y"
-             { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
-#line 1514 "parser.tab.c"
-    break;
+  case 11: /* primaryexpr: TK_IDENT TK_LPAREN exprlist TK_RPAREN  */
+#line 98 "parser.y"
+                                            {
 
-  case 63: /* binoper: TK_NEQU  */
-#line 176 "parser.y"
-              { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+    }
 #line 1520 "parser.tab.c"
     break;
 
-  case 64: /* binoper: TK_LT  */
-#line 177 "parser.y"
-            { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 22: /* exprseq: %empty  */
+#line 114 "parser.y"
+                    { (yyval.astnode) = NULL; }
 #line 1526 "parser.tab.c"
     break;
 
-  case 65: /* binoper: TK_GT  */
-#line 178 "parser.y"
-            { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 24: /* exprseqsfx: %empty  */
+#line 118 "parser.y"
+                    { (yyval.astnode) = NULL; }
 #line 1532 "parser.tab.c"
     break;
 
-  case 66: /* binoper: TK_LEQU  */
-#line 179 "parser.y"
-              { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 26: /* exprlist: %empty  */
+#line 122 "parser.y"
+                    { (yyval.astnode) = NULL; }
 #line 1538 "parser.tab.c"
     break;
 
-  case 67: /* binoper: TK_GEQU  */
-#line 180 "parser.y"
-              { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 28: /* exprlistsfx: %empty  */
+#line 126 "parser.y"
+                    { (yyval.astnode) = NULL; }
 #line 1544 "parser.tab.c"
     break;
 
-  case 68: /* binoper: TK_AND  */
-#line 181 "parser.y"
-             { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 31: /* fieldlistsfx: %empty  */
+#line 133 "parser.y"
+                    {  (yyval.astnode) = NULL; }
 #line 1550 "parser.tab.c"
     break;
 
-  case 69: /* binoper: TK_OR  */
-#line 182 "parser.y"
-            { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+  case 34: /* indexlist: %empty  */
+#line 140 "parser.y"
+                    {  (yyval.astnode) = NULL; }
 #line 1556 "parser.tab.c"
     break;
 
+  case 38: /* declist: %empty  */
+#line 148 "parser.y"
+                    { (yyval.astnode) = NULL; }
+#line 1562 "parser.tab.c"
+    break;
 
-#line 1560 "parser.tab.c"
+  case 46: /* typeid: TK_IDENT  */
+#line 164 "parser.y"
+                 { (yyval.astnode) = stxtree_create_ident_node((yyvsp[0].sym)); }
+#line 1568 "parser.tab.c"
+    break;
+
+  case 47: /* typeid: TK_INT  */
+#line 165 "parser.y"
+             {}
+#line 1574 "parser.tab.c"
+    break;
+
+  case 48: /* typeid: TK_STR  */
+#line 166 "parser.y"
+             {}
+#line 1580 "parser.tab.c"
+    break;
+
+  case 54: /* typefields: %empty  */
+#line 178 "parser.y"
+                    { (yyval.astnode) = NULL; }
+#line 1586 "parser.tab.c"
+    break;
+
+  case 56: /* typefieldsfx: %empty  */
+#line 182 "parser.y"
+                    { (yyval.astnode) = NULL; }
+#line 1592 "parser.tab.c"
+    break;
+
+  case 58: /* binoper: TK_PLUS  */
+#line 188 "parser.y"
+                 { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1598 "parser.tab.c"
+    break;
+
+  case 59: /* binoper: TK_MULTI  */
+#line 189 "parser.y"
+               { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1604 "parser.tab.c"
+    break;
+
+  case 60: /* binoper: TK_MINUS  */
+#line 190 "parser.y"
+               { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1610 "parser.tab.c"
+    break;
+
+  case 61: /* binoper: TK_DIV  */
+#line 191 "parser.y"
+             { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1616 "parser.tab.c"
+    break;
+
+  case 62: /* binoper: TK_EQU  */
+#line 192 "parser.y"
+             { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1622 "parser.tab.c"
+    break;
+
+  case 63: /* binoper: TK_NEQU  */
+#line 193 "parser.y"
+              { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1628 "parser.tab.c"
+    break;
+
+  case 64: /* binoper: TK_LT  */
+#line 194 "parser.y"
+            { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1634 "parser.tab.c"
+    break;
+
+  case 65: /* binoper: TK_GT  */
+#line 195 "parser.y"
+            { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1640 "parser.tab.c"
+    break;
+
+  case 66: /* binoper: TK_LEQU  */
+#line 196 "parser.y"
+              { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1646 "parser.tab.c"
+    break;
+
+  case 67: /* binoper: TK_GEQU  */
+#line 197 "parser.y"
+              { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1652 "parser.tab.c"
+    break;
+
+  case 68: /* binoper: TK_AND  */
+#line 198 "parser.y"
+             { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1658 "parser.tab.c"
+    break;
+
+  case 69: /* binoper: TK_OR  */
+#line 199 "parser.y"
+            { (yyval.astnode) = stxtree_create_binoper_node((yyvsp[0].tokentype)); }
+#line 1664 "parser.tab.c"
+    break;
+
+
+#line 1668 "parser.tab.c"
 
       default: break;
     }
@@ -1780,5 +1888,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 185 "parser.y"
+#line 202 "parser.y"
 

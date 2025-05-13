@@ -52,35 +52,52 @@ void yyerror(const char* msg)
 %type <astnode> exprsfx
 %type <astnode> binoper 
 %type <astnode> primaryexpr
+%type <astnode> lvalue
+%type <astnode> exprlist
+%type <astnode> exprlistsfx
+%type <astnode> exprseq
+%type <astnode> exprseqsfx
+%type <astnode> fieldlistsfx
+%type <astnode> indexlist
+%type <astnode> declist
+%type <astnode> typefields
+%type <astnode> typefieldsfx
+%type <astnode> typeid
+
 
 %%
 
 expr: primaryexpr exprsfx {
-    stxnode_t* sfxnode = $2;
-    if (!sfxnode) {
-        $$ = $1;
-    } else {
-        stxnode_t* prinode = $1;
-        *prinode->children + (prinode->count - 1) * sizeof(stxnode_t*) = sfxnode;
-    }
-}  
-    ;
+    stxtree_append_node($1, $2);
+    $$ = $1;
+};
 
 exprsfx: binoper expr { 
     stxnode_t* opnode = $1;
-    (*opnode->children)[1] = $2;
+    stxtree_append_node(opnode, $2);
     $$ = opnode;
  }
-    | /* epsilon */
+    | /* epsilon */ {
+        $$ = NULL;
+    }
     ;
 
-primaryexpr: TK_STRING  {printf("\"%s\"\n", $<sval>1);}
-    | TK_INTEGER {printf("%d\n", $<ival>1);}
-    | TK_NIL
+primaryexpr: TK_STRING  { $$ = stxtree_create_string_node($<sval>1); }
+    | TK_INTEGER { $$ = stxtree_create_integer_node($<ival>1); }
+    | TK_NIL { $$ = stxtree_create_nil_node(); }
     | lvalue
-    | TK_MINUS expr %prec UMINUS
-    | lvalue TK_ASSIGN expr
-    | TK_IDENT TK_LPAREN exprlist TK_RPAREN
+    | TK_MINUS expr %prec UMINUS { 
+        stxnode_t* msnode = stxtree_create_unary_minus_node();
+        stxtree_append_node(msnode, $2);
+    }
+    | lvalue TK_ASSIGN expr {
+        stxnode_t* assnode = stxtree_create_assign_node();
+        stxtree_append_node(assnode, $1);
+        stxtree_append_node(assnode, $3);
+    }
+    | TK_IDENT TK_LPAREN exprlist TK_RPAREN {
+
+    }
     | TK_LPAREN exprseq TK_RPAREN
     | TK_IDENT TK_LBRACE fieldlist TK_RBRACE
     | TK_IDENT TK_LBRACKET expr TK_RBRACKET TK_OF expr
@@ -88,39 +105,39 @@ primaryexpr: TK_STRING  {printf("\"%s\"\n", $<sval>1);}
     | TK_IF expr TK_THEN expr TK_ELSE expr
     | TK_WHILE expr TK_DO expr
     | TK_FOR TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr
-    | TK_BREAK
+    | TK_BREAK { $$ = stxtree_create_break_node(); }
     | TK_LET declist TK_IN exprseq TK_END
     ;
 
 
 exprseq: expr exprseqsfx
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 exprseqsfx: TK_SEMICOLON expr exprseqsfx
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 exprlist: expr exprlistsfx
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 exprlistsfx: TK_COMMA expr exprlistsfx
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 fieldlist: TK_IDENT TK_EQU expr fieldlistsfx
     ;
 
 fieldlistsfx: TK_COMMA TK_IDENT TK_EQU expr fieldlistsfx
-    | /* epsilon */
+    | /* epsilon */ {  $$ = NULL; }
     ;
 
 lvalue: TK_IDENT indexlist
     ;
 
 indexlist: index indexlist
-    | /* epsilon */
+    | /* epsilon */ {  $$ = NULL; }
     ;
 
 index: TK_DOT TK_IDENT 
@@ -128,7 +145,7 @@ index: TK_DOT TK_IDENT
     ;
 
 declist: dec declist
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 dec: typedec
@@ -144,9 +161,9 @@ typeval: typeid
     | TK_ARRAY TK_OF typeid
     ;
 
-typeid: TK_IDENT
-    | TK_INT
-    | TK_STR
+typeid: TK_IDENT { $$ = stxtree_create_ident_node($<sym>1); }
+    | TK_INT {}
+    | TK_STR {}
     ;
 
 vardec: TK_VAR TK_IDENT TK_ASSIGN expr
@@ -158,11 +175,11 @@ funcdec: TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_
     ;
 
 typefields: typefield typefieldsfx
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 typefieldsfx: TK_COMMA typefield typefieldsfx
-    | /* epsilon */
+    | /* epsilon */ { $$ = NULL; }
     ;
 
 typefield: TK_IDENT TK_COLON typeid

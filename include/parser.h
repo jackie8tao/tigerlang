@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
-# define YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
+#ifndef YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
+# define YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -117,7 +117,7 @@ union YYSTYPE
     struct stxnode* astnode;
     int tokentype;   
 
-#line 121 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
+#line 121 "/home/jackietao/dev/tigerlang/include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -132,4 +132,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED  */

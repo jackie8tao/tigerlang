@@ -2,7 +2,7 @@
 #define __TIGERDEF_H
 
 #define MAX_STR_SIZE 1024
-#define MAX_STXTREE_NODE 10
+#define STXTREE_INIT_CAP 5
 
 #define SUCC 0
 #define ERR_SYSTEM -99
