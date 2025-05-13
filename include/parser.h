@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
-# define YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
+#ifndef YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
+# define YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -56,49 +56,51 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     TK_ARRAY = 258,                /* TK_ARRAY  */
     TK_NIL = 259,                  /* TK_NIL  */
-    TK_VAR = 260,                  /* TK_VAR  */
-    TK_TYPE = 261,                 /* TK_TYPE  */
-    TK_LET = 262,                  /* TK_LET  */
-    TK_END = 263,                  /* TK_END  */
-    TK_FUNCTION = 264,             /* TK_FUNCTION  */
-    TK_IN = 265,                   /* TK_IN  */
-    TK_OF = 266,                   /* TK_OF  */
-    TK_IF = 267,                   /* TK_IF  */
-    TK_THEN = 268,                 /* TK_THEN  */
-    TK_ELSE = 269,                 /* TK_ELSE  */
-    TK_BREAK = 270,                /* TK_BREAK  */
-    TK_DO = 271,                   /* TK_DO  */
-    TK_WHILE = 272,                /* TK_WHILE  */
-    TK_FOR = 273,                  /* TK_FOR  */
-    TK_TO = 274,                   /* TK_TO  */
-    TK_COMMA = 275,                /* TK_COMMA  */
-    TK_COLON = 276,                /* TK_COLON  */
-    TK_SEMICOLON = 277,            /* TK_SEMICOLON  */
-    TK_LPAREN = 278,               /* TK_LPAREN  */
-    TK_RPAREN = 279,               /* TK_RPAREN  */
-    TK_LBRACKET = 280,             /* TK_LBRACKET  */
-    TK_RBRACKET = 281,             /* TK_RBRACKET  */
-    TK_LBRACE = 282,               /* TK_LBRACE  */
-    TK_RBRACE = 283,               /* TK_RBRACE  */
-    TK_DOT = 284,                  /* TK_DOT  */
-    TK_PLUS = 285,                 /* TK_PLUS  */
-    TK_MINUS = 286,                /* TK_MINUS  */
-    TK_MULTI = 287,                /* TK_MULTI  */
-    TK_DIV = 288,                  /* TK_DIV  */
-    TK_EQU = 289,                  /* TK_EQU  */
-    TK_NEQU = 290,                 /* TK_NEQU  */
-    TK_LT = 291,                   /* TK_LT  */
-    TK_LEQU = 292,                 /* TK_LEQU  */
-    TK_GT = 293,                   /* TK_GT  */
-    TK_GEQU = 294,                 /* TK_GEQU  */
-    TK_AND = 295,                  /* TK_AND  */
-    TK_OR = 296,                   /* TK_OR  */
-    TK_ASSIGN = 297,               /* TK_ASSIGN  */
-    TK_IDENT = 298,                /* TK_IDENT  */
-    TK_INTEGER = 299,              /* TK_INTEGER  */
-    TK_STRING = 300,               /* TK_STRING  */
-    UMINUS = 301,                  /* UMINUS  */
-    PREFER = 302                   /* PREFER  */
+    TK_INT = 260,                  /* TK_INT  */
+    TK_STR = 261,                  /* TK_STR  */
+    TK_VAR = 262,                  /* TK_VAR  */
+    TK_TYPE = 263,                 /* TK_TYPE  */
+    TK_LET = 264,                  /* TK_LET  */
+    TK_END = 265,                  /* TK_END  */
+    TK_FUNCTION = 266,             /* TK_FUNCTION  */
+    TK_IN = 267,                   /* TK_IN  */
+    TK_OF = 268,                   /* TK_OF  */
+    TK_IF = 269,                   /* TK_IF  */
+    TK_THEN = 270,                 /* TK_THEN  */
+    TK_ELSE = 271,                 /* TK_ELSE  */
+    TK_BREAK = 272,                /* TK_BREAK  */
+    TK_DO = 273,                   /* TK_DO  */
+    TK_WHILE = 274,                /* TK_WHILE  */
+    TK_FOR = 275,                  /* TK_FOR  */
+    TK_TO = 276,                   /* TK_TO  */
+    TK_COMMA = 277,                /* TK_COMMA  */
+    TK_COLON = 278,                /* TK_COLON  */
+    TK_SEMICOLON = 279,            /* TK_SEMICOLON  */
+    TK_LPAREN = 280,               /* TK_LPAREN  */
+    TK_RPAREN = 281,               /* TK_RPAREN  */
+    TK_LBRACKET = 282,             /* TK_LBRACKET  */
+    TK_RBRACKET = 283,             /* TK_RBRACKET  */
+    TK_LBRACE = 284,               /* TK_LBRACE  */
+    TK_RBRACE = 285,               /* TK_RBRACE  */
+    TK_DOT = 286,                  /* TK_DOT  */
+    TK_PLUS = 287,                 /* TK_PLUS  */
+    TK_MINUS = 288,                /* TK_MINUS  */
+    TK_MULTI = 289,                /* TK_MULTI  */
+    TK_DIV = 290,                  /* TK_DIV  */
+    TK_EQU = 291,                  /* TK_EQU  */
+    TK_NEQU = 292,                 /* TK_NEQU  */
+    TK_LT = 293,                   /* TK_LT  */
+    TK_LEQU = 294,                 /* TK_LEQU  */
+    TK_GT = 295,                   /* TK_GT  */
+    TK_GEQU = 296,                 /* TK_GEQU  */
+    TK_AND = 297,                  /* TK_AND  */
+    TK_OR = 298,                   /* TK_OR  */
+    TK_ASSIGN = 299,               /* TK_ASSIGN  */
+    TK_IDENT = 300,                /* TK_IDENT  */
+    TK_INTEGER = 301,              /* TK_INTEGER  */
+    TK_STRING = 302,               /* TK_STRING  */
+    UMINUS = 303,                  /* UMINUS  */
+    PREFER = 304                   /* PREFER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -107,13 +109,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 26 "parser.y"
+#line 17 "parser.y"
 
     char* sym;
     int ival;
     char* sval;
+    struct stxnode* astnode;
+    int tokentype;   
 
-#line 117 "/home/jackietao/dev/tigerlang/include/parser.h"
+#line 121 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -128,4 +132,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_HOME_JACKIETAO_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_USERS_TAODINGFEI_DEV_TIGERLANG_INCLUDE_PARSER_H_INCLUDED  */

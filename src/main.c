@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <symtable.h>
-#include <err.h>
+#include <tigerdef.h>
 #include <stuff.h>
 #include <lex.h>
 #include <parser.h>
@@ -15,23 +15,22 @@ int main(int argc, char **argv)
     return ERR_ARGS;
   }
 
-  FILE *fp;
-  for (int i = 1; i < argc; i++)
-  {
-    fp = fopen(argv[i], "r");
-    if (!fp)
-    {
-      errmsg("cannot open file %s", argv[i]);
-      return ERR_SYSTEM;
-    }
-    yyin = fp;
+  // yydebug = 1;
 
-    int errcode;
-    if ((errcode = yyparse()) > 0)
-    {
-      errmsg("syntax parse error: %d", errcode);
-      return ERR_YACC;
-    }
+  FILE *fp;
+  fp = fopen(argv[1], "r");
+  if (!fp)
+  {
+    errmsg("cannot open file %s", argv[1]);
+    return ERR_SYSTEM;
+  }
+  yyin = fp;
+
+  int errcode;
+  if ((errcode = yyparse()) > 0)
+  {
+    errmsg("syntax parse error: %d", errcode);
+    return ERR_YACC;
   }
 
   return SUCC;

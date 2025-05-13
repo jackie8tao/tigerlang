@@ -1,7 +1,7 @@
 #include <stuff.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <err.h>
+#include <tigerdef.h>
 #include <stdio.h>
 
 // print error message

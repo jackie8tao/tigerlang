@@ -5,6 +5,7 @@
 #include <tigerdef.h>
 #include <stuff.h>
 #include <lex.h>
+#include <stxtree.h>
 
 void yyerror(const char* msg)
 {
@@ -13,21 +14,23 @@ void yyerror(const char* msg)
 }
 %}
 
-%token YYEOF
-%token TK_ARRAY TK_NIL
-%token TK_VAR TK_TYPE TK_LET TK_END TK_FUNCTION TK_IN TK_OF
-%token TK_IF TK_THEN TK_ELSE TK_BREAK TK_DO TK_WHILE TK_FOR TK_TO 
-%token TK_COMMA TK_COLON TK_SEMICOLON 
-%token TK_LPAREN TK_RPAREN TK_LBRACKET TK_RBRACKET TK_LBRACE TK_RBRACE TK_DOT
-%token TK_PLUS TK_MINUS TK_MULTI TK_DIV 
-%token TK_EQU TK_NEQU TK_LT TK_LEQU TK_GT TK_GEQU TK_AND TK_OR 
-%token TK_ASSIGN
-
 %union {
     char* sym;
     int ival;
     char* sval;
+    struct stxnode* astnode;
+    int tokentype;   
 }
+
+%token YYEOF
+%token <tokentype> TK_ARRAY TK_NIL TK_INT TK_STR
+%token <tokentype> TK_VAR TK_TYPE TK_LET TK_END TK_FUNCTION TK_IN TK_OF
+%token <tokentype> TK_IF TK_THEN TK_ELSE TK_BREAK TK_DO TK_WHILE TK_FOR TK_TO 
+%token <tokentype> TK_COMMA TK_COLON TK_SEMICOLON 
+%token <tokentype> TK_LPAREN TK_RPAREN TK_LBRACKET TK_RBRACKET TK_LBRACE TK_RBRACE TK_DOT
+%token <tokentype> TK_PLUS TK_MINUS TK_MULTI TK_DIV 
+%token <tokentype> TK_EQU TK_NEQU TK_LT TK_LEQU TK_GT TK_GEQU TK_AND TK_OR 
+%token TK_ASSIGN
 
 %token <sym> TK_IDENT
 %token <ival> TK_INTEGER
@@ -45,12 +48,29 @@ void yyerror(const char* msg)
 %right UMINUS
 %precedence PREFER
 
+%type <astnode> expr
+%type <astnode> exprsfx
+%type <astnode> binoper 
+%type <astnode> primaryexpr
+
 %%
 
-expr: primaryexpr exprsfx
+expr: primaryexpr exprsfx {
+    stxnode_t* sfxnode = $2;
+    if (!sfxnode) {
+        $$ = $1;
+    } else {
+        stxnode_t* prinode = $1;
+        *prinode->children + (prinode->count - 1) * sizeof(stxnode_t*) = sfxnode;
+    }
+}  
     ;
 
-exprsfx: binoper expr
+exprsfx: binoper expr { 
+    stxnode_t* opnode = $1;
+    (*opnode->children)[1] = $2;
+    $$ = opnode;
+ }
     | /* epsilon */
     ;
 
@@ -116,19 +136,24 @@ dec: typedec
     | funcdec
     ;
 
-typedec: TK_TYPE TK_IDENT TK_EQU typeval
+typedec: TK_TYPE typeid TK_EQU typeval
     ;
 
-typeval: TK_IDENT
+typeval: typeid
     | TK_LBRACE typefields TK_RBRACE
-    | TK_ARRAY TK_OF TK_IDENT
+    | TK_ARRAY TK_OF typeid
+    ;
+
+typeid: TK_IDENT
+    | TK_INT
+    | TK_STR
     ;
 
 vardec: TK_VAR TK_IDENT TK_ASSIGN expr
-    | TK_VAR TK_IDENT TK_COLON TK_IDENT TK_ASSIGN expr
+    | TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr
     ;
 
-funcdec: TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON TK_IDENT TK_EQU expr
+funcdec: TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr
     | TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr
     ;
 
@@ -140,21 +165,21 @@ typefieldsfx: TK_COMMA typefield typefieldsfx
     | /* epsilon */
     ;
 
-typefield: TK_IDENT TK_COLON TK_IDENT
+typefield: TK_IDENT TK_COLON typeid
     ;
 
-binoper: TK_PLUS
-    | TK_MULTI
-    | TK_MINUS
-    | TK_DIV
-    | TK_EQU
-    | TK_NEQU
-    | TK_LT
-    | TK_GT
-    | TK_LEQU
-    | TK_GEQU
-    | TK_AND
-    | TK_OR
+binoper: TK_PLUS { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_MULTI { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_MINUS { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_DIV { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_EQU { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_NEQU { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_LT { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_GT { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_LEQU { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_GEQU { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_AND { $$ = stxtree_create_binoper_node($<tokentype>1); }
+    | TK_OR { $$ = stxtree_create_binoper_node($<tokentype>1); }
     ;
 
 %%

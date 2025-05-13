@@ -2,5 +2,12 @@
 #define __TIGERDEF_H
 
 #define MAX_STR_SIZE 1024
+#define MAX_STXTREE_NODE 10
+
+#define SUCC 0
+#define ERR_SYSTEM -99
+#define ERR_LEX_ -1
+#define ERR_YACC -2
+#define ERR_ARGS -3
 
 #endif
