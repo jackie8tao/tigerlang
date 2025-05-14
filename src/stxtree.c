@@ -6,21 +6,37 @@
 #include <parser.h>
 #include <stuff.h>
 
+#ifndef ERRSTR_INVALID_MEM
 #define ERRSTR_INVALID_MEM "invalid memory"
+#endif
+
+#ifndef ERRSTR_INVALID_PARAMS
+#define ERRSTR_INVALID_PARAMS "invalid parameters"
+#endif
 
 static stxtree_t *_stree = NULL;
 
 void stxtree_init()
 {
-    if (!_stree)
+    if (_stree)
         return;
-    stxtree_t *_stree = (stxtree_t *)malloc(sizeof(stxtree_t));
+    _stree = (stxtree_t *)malloc(sizeof(stxtree_t));
     _stree->root = NULL;
     return;
 }
 
-// create keyword node without any children
-static stxnode_t *stxtree_create_keyword_node(yytoken_kind_t tokentype)
+stxtree_t *stxtree_get()
+{
+    if (!_stree)
+    {
+        errmsg("invalid syntax tree");
+        exit(ERR_SYSTEM);
+    }
+    return _stree;
+}
+
+// create keyword node without children and token val
+stxnode_t *stxtree_create_node(yytoken_kind_t tokentype)
 {
     stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
     if (!node)
@@ -36,136 +52,17 @@ static stxnode_t *stxtree_create_keyword_node(yytoken_kind_t tokentype)
     return node;
 }
 
-// static stxnode_t* stxtree_create_node_with_token
-
-// create binoper node along with two children node
-stxnode_t *stxtree_create_binoper_node(yytoken_kind_t token_type)
+static stxnode_t *stxtree_create_node_with_token(yytoken_kind_t tokentype, token_val_t *tkval)
 {
     stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
     if (!node)
         goto memerr;
 
-    node->cap = 2;
-    stxnode_t **children = (stxnode_t **)malloc(node->cap * sizeof(stxnode_t *));
-    if (!children)
-        goto memerr;
-
-    node->token_type = token_type;
-    node->count = 0;
-    node->children = children;
-    node->token_val = NULL;
-    goto succ;
-
-memerr:
-    errmsg(ERRSTR_INVALID_MEM);
-    exit(ERR_SYSTEM);
-succ:
-    return node;
-}
-
-stxnode_t *stxtree_create_break_node()
-{
-    return stxtree_create_keyword_node(TK_BREAK);
-}
-
-// create string node
-stxnode_t *stxtree_create_string_node(const char *str)
-{
-    stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
-    if (!node)
-        goto memerr;
-
-    token_val_t *tkval = (token_val_t *)malloc(sizeof(token_val_t));
-    if (!tkval)
-        goto memerr;
-    tkval->sval = strdup(str);
-
-    node->children = NULL;
+    node->token_type = tokentype;
     node->count = 0;
     node->cap = 0;
-    node->token_type = TK_STRING;
-    node->token_val = tkval;
-    goto succ;
-
-memerr:
-    errmsg(ERRSTR_INVALID_MEM);
-    exit(ERR_SYSTEM);
-succ:
-    return node;
-}
-
-// create integer node
-stxnode_t *stxtree_create_integer_node(int val)
-{
-    stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
-    if (!node)
-        goto memerr;
-
-    token_val_t *tkval = (token_val_t *)malloc(sizeof(token_val_t));
-    if (!tkval)
-        goto memerr;
-    tkval->ival = val;
-
     node->children = NULL;
-    node->cap = 0;
-    node->count = 0;
-    node->token_type = TK_INTEGER;
     node->token_val = tkval;
-    goto succ;
-
-memerr:
-    errmsg(ERRSTR_INVALID_MEM);
-    exit(ERR_SYSTEM);
-succ:
-    return node;
-}
-
-// create nil node
-stxnode_t *stxtree_create_nil_node()
-{
-    return stxtree_create_keyword_node(TK_NIL);
-}
-
-// create unary minus operator node with one children.
-stxnode_t *stxtree_create_unary_minus_node()
-{
-    stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
-    if (!node)
-        goto errmem;
-
-    stxnode_t **children = (stxnode_t **)malloc(sizeof(stxnode_t *));
-    if (!children)
-        goto errmem;
-
-    node->token_type = TK_MINUS;
-    node->count = 0;
-    node->cap = 1;
-    node->children = children;
-    node->token_val = NULL;
-    goto succ;
-errmem:
-    errmsg(ERRSTR_INVALID_MEM);
-    exit(ERR_SYSTEM);
-succ:
-    return node;
-}
-
-stxnode_t *stxtree_create_ident_node(const char *ident)
-{
-    stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
-    if (!node)
-        goto memerr;
-
-    token_val_t *tkval = (token_val_t *)malloc(sizeof(token_val_t));
-    if (!tkval)
-        goto memerr;
-
-    tkval->sym = strdup(ident);
-    node->children = NULL;
-    node->count = 0;
-    node->token_type = TK_IDENT;
-    node->token_val = tkval;
-
     goto succ;
 
 memerr:
@@ -194,6 +91,16 @@ static void stxtree_resize_node_children_list(stxnode_t *node)
     return;
 }
 
+static int stxtree_node_children_len(stxnode_t *n)
+{
+    if (!n)
+    {
+        errmsg(ERRSTR_INVALID_PARAMS);
+        exit(ERR_ARGS);
+    }
+    return n->count;
+}
+
 void stxtree_append_node(stxnode_t *dest, stxnode_t *src)
 {
     if (!src)
@@ -214,30 +121,237 @@ void stxtree_append_node(stxnode_t *dest, stxnode_t *src)
     return;
 }
 
-stxnode_t *stxtree_create_assign_node()
+// create string node
+stxnode_t *stxtree_create_string_node(const char *str)
 {
-    stxnode_t *node = (stxnode_t *)malloc(sizeof(stxnode_t));
+    token_val_t *tkval = (token_val_t *)malloc(sizeof(token_val_t));
+    if (!tkval)
+    {
+        errmsg(ERRSTR_INVALID_MEM);
+        exit(ERR_SYSTEM);
+    }
+    tkval->sval = strdup(str);
+
+    return stxtree_create_node_with_token(TK_STRING, tkval);
+}
+
+// create integer node
+stxnode_t *stxtree_create_integer_node(int val)
+{
+    token_val_t *tkval = (token_val_t *)malloc(sizeof(token_val_t));
+    if (!tkval)
+    {
+        errmsg(ERRSTR_INVALID_MEM);
+        exit(ERR_SYSTEM);
+    }
+    tkval->ival = val;
+
+    return stxtree_create_node_with_token(TK_INTEGER, tkval);
+}
+
+stxnode_t *stxtree_create_ident_node(const char *ident)
+{
+    token_val_t *tkval = (token_val_t *)malloc(sizeof(token_val_t));
+    if (!tkval)
+    {
+        errmsg(ERRSTR_INVALID_MEM);
+        exit(ERR_SYSTEM);
+    }
+    tkval->sym = strdup(ident);
+
+    return stxtree_create_node_with_token(TK_IDENT, tkval);
+}
+
+static void stxtree_node_free(stxnode_t *node)
+{
     if (!node)
-        goto memerr;
+        return;
 
-    node->cap = 2;
-    stxnode_t **children = (stxnode_t **)malloc(node->cap * sizeof(stxnode_t *));
-    if (!children)
-        goto memerr;
+    if (node->cap < 0)
+    {
+        free(node->token_val);
+        free(node);
+        return;
+    }
 
-    node->token_type = TK_ASSIGN;
-    node->count = 0;
-    node->children = children;
-    node->token_val = NULL;
+    for (int i = 0; i < node->cap; i++)
+    {
+        stxtree_node_free(node->children[i]);
+    }
+
+    return;
+}
+
+// reset global syntax tree and free all node
+void stxtree_reset()
+{
+    stxtree_node_free(_stree->root);
+    free(_stree);
+    _stree = NULL;
+    return;
+}
+
+typedef struct node_queue
+{
+    int cap;
+    int count;
+    stxnode_t **data;
+} node_queue_t;
+
+static node_queue_t *node_queue_create()
+{
+    node_queue_t *q = (node_queue_t *)malloc(sizeof(node_queue_t));
+    if (!q)
+        goto errmem;
+
+    q->cap = 10;
+    q->count = 0;
+
+    q->data = (stxnode_t **)malloc(q->cap * sizeof(stxnode_t *));
+    if (!q->data)
+        goto errmem;
+    memset(q->data, 0, q->cap * sizeof(stxnode_t *));
     goto succ;
 
-memerr:
+errmem:
     errmsg(ERRSTR_INVALID_MEM);
     exit(ERR_SYSTEM);
 succ:
+    return q;
+}
+
+static void node_queue_free(node_queue_t *q)
+{
+    if (!q)
+        return;
+    free(q->data);
+    free(q);
+}
+
+static void node_queue_resize(node_queue_t *q)
+{
+    if (!q)
+    {
+        errmsg(ERRSTR_INVALID_PARAMS);
+        exit(ERR_ARGS);
+    }
+
+    q->cap = 2 * q->cap;
+
+    stxnode_t **new_data = (stxnode_t **)malloc(q->cap * sizeof(stxnode_t *));
+    if (!new_data)
+    {
+        errmsg(ERRSTR_INVALID_MEM);
+        exit(ERR_SYSTEM);
+    }
+    memset(new_data, 0, q->cap * sizeof(stxnode_t *));
+
+    for (int i = 0; i < q->count; i++)
+        new_data[i] = q->data[i];
+    free(q->data);
+    q->data = new_data;
+    return;
+}
+
+static stxnode_t *node_queue_pop(node_queue_t *q)
+{
+    if (!q)
+    {
+        errmsg(ERRSTR_INVALID_PARAMS);
+        exit(ERR_ARGS);
+    }
+    if (q->count <= 0)
+        return NULL;
+
+    stxnode_t *node = q->data[0];
+    for (int i = 1; i < q->count; i++)
+        q->data[i - 1] = q->data[i];
+    q->data[q->count - 1] = NULL;
+    q->count--;
     return node;
+}
+
+static void node_queue_push(node_queue_t *q, stxnode_t *node)
+{
+    if (!q || !node)
+    {
+        errmsg(ERRSTR_INVALID_PARAMS);
+        exit(ERR_ARGS);
+    }
+    if (q->count >= q->cap)
+        node_queue_resize(q);
+    q->data[q->count] = node;
+    q->count++;
+    // printf("%d, %p, %d\n", node->token_type, node, q->count);
+    return;
+}
+
+static int node_queue_len(node_queue_t *q)
+{
+    if (!q)
+    {
+        errmsg(ERRSTR_INVALID_PARAMS);
+        exit(ERR_ARGS);
+    }
+    return q->count;
 }
 
 void stxtree_show()
 {
+    if (!_stree || !_stree->root)
+        return;
+    node_queue_t *q = node_queue_create();
+    node_queue_push(q, _stree->root);
+
+    stxnode_t *cur = NULL;
+    int prev_deep = 0;
+    while (node_queue_len(q) > 0)
+    {
+        cur = node_queue_pop(q);
+        if (cur->token_type == -1)
+        {
+            // print separate string
+            printf(" || ");
+            continue;
+        }
+
+        // when prev deep is not equal cur deep, we print '\n'
+        if (prev_deep != cur->deep)
+            printf("\n");
+        prev_deep = cur->deep;
+
+        switch (cur->token_type)
+        {
+        case TK_INTEGER:
+            printf("%d ", cur->token_val->ival);
+            break;
+        case TK_STRING:
+            printf("%s ", cur->token_val->sval);
+            break;
+        case TK_IDENT:
+            printf("%s ", cur->token_val->sym);
+            break;
+        default:
+            printf("%s ", token_type_to_str(cur->token_type));
+            break;
+        }
+
+        if (cur->count <= 0)
+            continue;
+        for (int i = 0; i < cur->count; i++)
+        {
+            cur->children[i]->deep = cur->deep + 1;
+            node_queue_push(q, cur->children[i]);
+        }
+        stxnode_t *empty = (stxnode_t *)malloc(sizeof(stxnode_t));
+        if (!empty)
+        {
+            errmsg(ERRSTR_INVALID_MEM);
+            exit(ERR_SYSTEM);
+        }
+        empty->token_type = -1;
+        node_queue_push(q, empty);
+    }
+
+    return;
 }

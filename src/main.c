@@ -4,11 +4,11 @@
 #include <stuff.h>
 #include <lex.h>
 #include <parser.h>
+#include <stxtree.h>
 
 // read input files, then print result
 int main(int argc, char **argv)
 {
-  sym_table_init();
   if (argc < 2)
   {
     perror("empyt input files");
@@ -26,12 +26,17 @@ int main(int argc, char **argv)
   }
   yyin = fp;
 
+  sym_table_init();
+  stxtree_init();
+
   int errcode;
   if ((errcode = yyparse()) > 0)
   {
     errmsg("syntax parse error: %d", errcode);
     return ERR_YACC;
   }
+
+  stxtree_show();
 
   return SUCC;
 }
