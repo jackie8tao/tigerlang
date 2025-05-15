@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     return ERR_YACC;
   }
 
-  stxtree_show();
+  stxtree_show_node(TK_TYPE);
 
   return SUCC;
 }

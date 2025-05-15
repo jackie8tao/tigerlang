@@ -115,9 +115,8 @@ union YYSTYPE
     int ival;
     char* sval;
     struct stxnode* astnode;
-    int tokentype;   
 
-#line 121 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
+#line 120 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

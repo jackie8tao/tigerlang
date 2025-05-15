@@ -915,248 +915,244 @@ case 7:
 YY_RULE_SETUP
 #line 73 "lex.l"
 { 
-    yylval.ival = atoi(yytext); 
-    yylval.tokentype = TK_INTEGER; 
+    yylval.ival = atoi(yytext);
     return TK_INTEGER; 
     }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 78 "lex.l"
+#line 77 "lex.l"
 {;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 79 "lex.l"
-{ yylval.tokentype = TK_ARRAY; return TK_ARRAY; }
+#line 78 "lex.l"
+{ return TK_ARRAY; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 80 "lex.l"
-{ yylval.tokentype = TK_BREAK; return TK_BREAK; }
+#line 79 "lex.l"
+{ return TK_BREAK; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 81 "lex.l"
-{ yylval.tokentype = TK_DO; return TK_DO; }
+#line 80 "lex.l"
+{ return TK_DO; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 82 "lex.l"
-{ yylval.tokentype = TK_ELSE; return TK_ELSE; }
+#line 81 "lex.l"
+{ return TK_ELSE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 83 "lex.l"
-{ yylval.tokentype = TK_END; return TK_END; }
+#line 82 "lex.l"
+{ return TK_END; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 84 "lex.l"
-{ yylval.tokentype = TK_FOR; return TK_FOR; }
+#line 83 "lex.l"
+{ return TK_FOR; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 85 "lex.l"
-{ yylval.tokentype = TK_FUNCTION; return TK_FUNCTION; }
+#line 84 "lex.l"
+{ return TK_FUNCTION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 86 "lex.l"
-{ yylval.tokentype = TK_IF; return TK_IF; }
+#line 85 "lex.l"
+{ return TK_IF; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 87 "lex.l"
-{ yylval.tokentype = TK_IN; return TK_IN; }
+#line 86 "lex.l"
+{ return TK_IN; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 88 "lex.l"
-{ yylval.tokentype = TK_LET; return TK_LET; }
+#line 87 "lex.l"
+{ return TK_LET; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 89 "lex.l"
-{ yylval.tokentype = TK_NIL; return TK_NIL; }
+#line 88 "lex.l"
+{ return TK_NIL; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 90 "lex.l"
-{ yylval.tokentype = TK_OF; return TK_OF; }
+#line 89 "lex.l"
+{ return TK_OF; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 91 "lex.l"
-{ yylval.tokentype = TK_THEN; return TK_THEN; }
+#line 90 "lex.l"
+{ return TK_THEN; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 92 "lex.l"
-{ yylval.tokentype = TK_DO; return TK_TO; }
+#line 91 "lex.l"
+{ return TK_TO; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 93 "lex.l"
-{ yylval.tokentype = TK_TYPE; return TK_TYPE; }
+#line 92 "lex.l"
+{ return TK_TYPE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 94 "lex.l"
-{ yylval.tokentype = TK_VAR; return TK_VAR; }
+#line 93 "lex.l"
+{ return TK_VAR; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 95 "lex.l"
-{ yylval.tokentype = TK_WHILE; return TK_WHILE; }
+#line 94 "lex.l"
+{ return TK_WHILE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 96 "lex.l"
-{ yylval.tokentype = TK_STR; return TK_STR; }
+#line 95 "lex.l"
+{ return TK_STR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 97 "lex.l"
-{ yylval.tokentype = TK_INT; return TK_INT; }
+#line 96 "lex.l"
+{ return TK_INT; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 98 "lex.l"
-{ yylval.tokentype = TK_COMMA; return TK_COMMA; }
+#line 97 "lex.l"
+{ return TK_COMMA; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 99 "lex.l"
-{ yylval.tokentype = TK_ASSIGN; return TK_ASSIGN; }
+#line 98 "lex.l"
+{ return TK_ASSIGN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 100 "lex.l"
-{ yylval.tokentype = TK_COLON; return TK_COLON; }
+#line 99 "lex.l"
+{ return TK_COLON; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 101 "lex.l"
-{ yylval.tokentype = TK_SEMICOLON; return TK_SEMICOLON; }
+#line 100 "lex.l"
+{ return TK_SEMICOLON; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 102 "lex.l"
-{ yylval.tokentype = TK_LPAREN; return TK_LPAREN; }
+#line 101 "lex.l"
+{ return TK_LPAREN; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 103 "lex.l"
-{ yylval.tokentype = TK_RPAREN; return TK_RPAREN; }
+#line 102 "lex.l"
+{ return TK_RPAREN; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 104 "lex.l"
-{ yylval.tokentype = TK_LBRACKET; return TK_LBRACKET; }
+#line 103 "lex.l"
+{ return TK_LBRACKET; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 105 "lex.l"
-{ yylval.tokentype = TK_RBRACKET; return TK_RBRACKET; }
+#line 104 "lex.l"
+{ return TK_RBRACKET; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 106 "lex.l"
-{ yylval.tokentype = TK_LBRACE; return TK_LBRACE; }
+#line 105 "lex.l"
+{ return TK_LBRACE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 107 "lex.l"
-{ yylval.tokentype = TK_RBRACE; return TK_RBRACE; }
+#line 106 "lex.l"
+{ return TK_RBRACE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 108 "lex.l"
-{ yylval.tokentype = TK_DOT; return TK_DOT; }
+#line 107 "lex.l"
+{ return TK_DOT; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 109 "lex.l"
-{ yylval.tokentype = TK_PLUS; return TK_PLUS; }
+#line 108 "lex.l"
+{ return TK_PLUS; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 110 "lex.l"
-{ yylval.tokentype = TK_MINUS; return TK_MINUS; }
+#line 109 "lex.l"
+{ return TK_MINUS; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 111 "lex.l"
-{ yylval.tokentype = TK_MULTI; return TK_MULTI; }
+#line 110 "lex.l"
+{ return TK_MULTI; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 112 "lex.l"
-{ yylval.tokentype = TK_DIV; return TK_DIV; }
+#line 111 "lex.l"
+{ return TK_DIV; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 113 "lex.l"
-{ yylval.tokentype = TK_EQU; return TK_EQU; }
+#line 112 "lex.l"
+{ return TK_EQU; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 114 "lex.l"
-{ yylval.tokentype = TK_NEQU; return TK_NEQU; }
+#line 113 "lex.l"
+{ return TK_NEQU; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 115 "lex.l"
-{ yylval.tokentype = TK_LT; return TK_LT; }
+#line 114 "lex.l"
+{ return TK_LT; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 116 "lex.l"
-{ yylval.tokentype = TK_LEQU; return TK_LEQU; }
+#line 115 "lex.l"
+{ return TK_LEQU; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 117 "lex.l"
-{ yylval.tokentype = TK_GT; return TK_GT; }
+#line 116 "lex.l"
+{ return TK_GT; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 118 "lex.l"
-{ yylval.tokentype = TK_GEQU; return TK_GEQU; }
+#line 117 "lex.l"
+{ return TK_GEQU; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 119 "lex.l"
-{ yylval.tokentype = TK_AND; return TK_AND; }
+#line 118 "lex.l"
+{ return TK_AND; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 120 "lex.l"
-{ yylval.tokentype = TK_OR; return TK_OR; }
+#line 119 "lex.l"
+{ return TK_OR; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 121 "lex.l"
+#line 120 "lex.l"
 {
     sym_entry_t* entry = (sym_entry_t*)malloc(sizeof(sym_entry_t));
     entry->type = TK_IDENT;
     entry->token = strdup(yytext);
     entry->lineno = yylineno;
     sym_table_append(entry);
-
     yylval.sym = strdup(yytext);
-    yylval.tokentype = TK_IDENT;
-
     return TK_IDENT; 
     }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 134 "lex.l"
+#line 130 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1159 "lex.yy.c"
+#line 1155 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(STR):
 	yyterminate();
@@ -2162,7 +2158,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 134 "lex.l"
+#line 130 "lex.l"
 
 
 int yywrap() 

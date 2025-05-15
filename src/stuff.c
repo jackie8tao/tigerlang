@@ -150,8 +150,14 @@ const char *token_type_to_str(yytoken_kind_t token_type)
   case TK_ASSIGN:
     tokenstr = ":=";
     break;
+  case TK_ELSE:
+    tokenstr = "else";
+    break;
+  case YYEOF:
+    tokenstr = "";
+    break;
   default:
-    errmsg("invalid token type");
+    errmsg("invalid token type: %d", token_type);
     exit(ERR_SYSTEM);
     break;
   }

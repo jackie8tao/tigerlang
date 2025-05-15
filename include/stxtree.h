@@ -29,11 +29,12 @@ typedef struct stxtree
 void stxtree_init();
 stxtree_t* stxtree_get();
 void stxtree_reset();
-stxnode_t *stxtree_create_node(yytoken_kind_t tokentype);
+stxnode_t *stxtree_create_node(yytoken_kind_t token_type);
 void stxtree_append_node(stxnode_t *dest, stxnode_t *src);
 stxnode_t *stxtree_create_string_node(const char *str);
 stxnode_t *stxtree_create_integer_node(int val);
 stxnode_t *stxtree_create_ident_node(const char *ident);
-void stxtree_show();
+void stxtree_show_all();
+void stxtree_show_node(yytoken_kind_t token_type);
 
 #endif
