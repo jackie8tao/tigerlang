@@ -18,7 +18,7 @@ LEXFLAGS := --header-file=$(INCLUDEDIR)/lex.h
 YACC := bison
 YACCFLAGS := --header=$(INCLUDEDIR)/parser.h
 
-OBJS := lex.yy.o parser.tab.o stuff.o stxtree.o symtable.o main.o
+OBJS := lex.yy.o parser.tab.o stuff.o stxtree.o symdict.o scope.o main.o
 
 tiger: lex yacc $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ROOTDIR)/$(PROJ) $(OBJS)

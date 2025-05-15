@@ -3,16 +3,15 @@
 #include <tigerdef.h>
 #include <string.h>
 #include <stdio.h>
-#include <symtable.h>
 #include <stdlib.h>
 #include <stxtree.h>
 
-char tiger_str[MAX_STR_SIZE];
+char tiger_str[STRING_MAX_SIZE];
 int tiger_str_leng;
 
 static void tiger_str_reset() 
 {
-    for (int i=0; i<MAX_STR_SIZE; i++) 
+    for (int i=0; i<STRING_MAX_SIZE; i++) 
     {
         tiger_str[i] = '\0';
     }
@@ -21,7 +20,7 @@ static void tiger_str_reset()
 static void tiger_str_append(const char* src, int length)
 {
     int cur_len = (int)strlen(tiger_str);
-    if (cur_len+ length > MAX_STR_SIZE) 
+    if (cur_len+ length > STRING_MAX_SIZE) 
     {
         perror("tiger string length is too long");
         exit(-1);
@@ -118,11 +117,6 @@ int { return TK_INT; }
 & { return TK_AND; }
 '|' { return TK_OR; }
 {ident} {
-    sym_entry_t* entry = (sym_entry_t*)malloc(sizeof(sym_entry_t));
-    entry->type = TK_IDENT;
-    entry->token = strdup(yytext);
-    entry->lineno = yylineno;
-    sym_table_append(entry);
     yylval.sym = strdup(yytext);
     return TK_IDENT; 
     }

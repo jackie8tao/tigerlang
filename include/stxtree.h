@@ -4,30 +4,27 @@
 #include <parser.h>
 #include <tigerdef.h>
 
-typedef union token_val
-{
-    char *sym;  // symbol value
-    int ival;   // integer value
-    char *sval; // string value
+typedef union token_val {
+  char *sym;  // symbol value
+  int ival;   // integer value
+  char *sval; // string value
 } token_val_t;
 
-typedef struct stxnode
-{
-    yytoken_kind_t token_type;
-    token_val_t *token_val;
-    int count; // children node count
-    int cap;   // capacity of node children list
-    struct stxnode **children;
-    int deep; // tree deep is used to travel tree
+typedef struct stxnode {
+  yytoken_kind_t token_type;
+  token_val_t *token_val;
+  int count; // children node count
+  int cap;   // capacity of node children list
+  struct stxnode **children;
+  int deep; // tree deep is used to travel tree
 } stxnode_t;
 
-typedef struct stxtree
-{
-    stxnode_t *root;
+typedef struct stxtree {
+  stxnode_t *root;
 } stxtree_t;
 
 void stxtree_init();
-stxtree_t* stxtree_get();
+stxtree_t *stxtree_get();
 void stxtree_reset();
 stxnode_t *stxtree_create_node(yytoken_kind_t token_type);
 void stxtree_append_node(stxnode_t *dest, stxnode_t *src);

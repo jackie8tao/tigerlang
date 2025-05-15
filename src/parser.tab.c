@@ -1846,7 +1846,7 @@ yyreduce:
     stxnode_t* typenode = stxtree_create_node(TK_TYPE);
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
     stxtree_append_node(equnode, (yyvsp[0].astnode));
-    stxtree_append_node(typenode, (yyvsp[-2].astnode));
+    stxtree_append_node(equnode, (yyvsp[-2].astnode));
     stxtree_append_node(typenode, equnode);
     (yyval.astnode) = typenode;
 }
