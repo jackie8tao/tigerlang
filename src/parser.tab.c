@@ -76,6 +76,8 @@
 #include <stuff.h>
 #include <lex.h>
 #include <stxtree.h>
+#include <scope.h>
+#include <symdict.h>
 
 void yyerror(const char* msg)
 {
@@ -83,7 +85,7 @@ void yyerror(const char* msg)
     exit(ERR_YACC);
 }
 
-#line 87 "parser.tab.c"
+#line 89 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -163,29 +165,31 @@ enum yysymbol_kind_t
   YYSYMBOL_PREFER = 49,                    /* PREFER  */
   YYSYMBOL_YYACCEPT = 50,                  /* $accept  */
   YYSYMBOL_stmt = 51,                      /* stmt  */
-  YYSYMBOL_expr = 52,                      /* expr  */
-  YYSYMBOL_exprsfx = 53,                   /* exprsfx  */
-  YYSYMBOL_primaryexpr = 54,               /* primaryexpr  */
-  YYSYMBOL_exprseq = 55,                   /* exprseq  */
-  YYSYMBOL_exprseqsfx = 56,                /* exprseqsfx  */
-  YYSYMBOL_exprlist = 57,                  /* exprlist  */
-  YYSYMBOL_exprlistsfx = 58,               /* exprlistsfx  */
-  YYSYMBOL_fieldlist = 59,                 /* fieldlist  */
-  YYSYMBOL_fieldlistsfx = 60,              /* fieldlistsfx  */
-  YYSYMBOL_lvalue = 61,                    /* lvalue  */
-  YYSYMBOL_indexlist = 62,                 /* indexlist  */
-  YYSYMBOL_index = 63,                     /* index  */
-  YYSYMBOL_declist = 64,                   /* declist  */
-  YYSYMBOL_dec = 65,                       /* dec  */
-  YYSYMBOL_typedec = 66,                   /* typedec  */
-  YYSYMBOL_typeval = 67,                   /* typeval  */
-  YYSYMBOL_typeid = 68,                    /* typeid  */
-  YYSYMBOL_vardec = 69,                    /* vardec  */
-  YYSYMBOL_funcdec = 70,                   /* funcdec  */
-  YYSYMBOL_typefields = 71,                /* typefields  */
-  YYSYMBOL_typefieldsfx = 72,              /* typefieldsfx  */
-  YYSYMBOL_typefield = 73,                 /* typefield  */
-  YYSYMBOL_binoper = 74                    /* binoper  */
+  YYSYMBOL_entersc = 52,                   /* entersc  */
+  YYSYMBOL_leavesc = 53,                   /* leavesc  */
+  YYSYMBOL_expr = 54,                      /* expr  */
+  YYSYMBOL_exprsfx = 55,                   /* exprsfx  */
+  YYSYMBOL_primaryexpr = 56,               /* primaryexpr  */
+  YYSYMBOL_exprseq = 57,                   /* exprseq  */
+  YYSYMBOL_exprseqsfx = 58,                /* exprseqsfx  */
+  YYSYMBOL_exprlist = 59,                  /* exprlist  */
+  YYSYMBOL_exprlistsfx = 60,               /* exprlistsfx  */
+  YYSYMBOL_fieldlist = 61,                 /* fieldlist  */
+  YYSYMBOL_fieldlistsfx = 62,              /* fieldlistsfx  */
+  YYSYMBOL_lvalue = 63,                    /* lvalue  */
+  YYSYMBOL_indexlist = 64,                 /* indexlist  */
+  YYSYMBOL_index = 65,                     /* index  */
+  YYSYMBOL_declist = 66,                   /* declist  */
+  YYSYMBOL_dec = 67,                       /* dec  */
+  YYSYMBOL_typedec = 68,                   /* typedec  */
+  YYSYMBOL_typeval = 69,                   /* typeval  */
+  YYSYMBOL_typeid = 70,                    /* typeid  */
+  YYSYMBOL_vardec = 71,                    /* vardec  */
+  YYSYMBOL_funcdec = 72,                   /* funcdec  */
+  YYSYMBOL_typefields = 73,                /* typefields  */
+  YYSYMBOL_typefieldsfx = 74,              /* typefieldsfx  */
+  YYSYMBOL_typefield = 75,                 /* typefield  */
+  YYSYMBOL_binoper = 76                    /* binoper  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -511,18 +515,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  36
+#define YYFINAL  29
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   136
+#define YYLAST   148
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  50
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  25
+#define YYNNTS  27
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  70
+#define YYNRULES  72
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  140
+#define YYNSTATES  152
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   304
@@ -576,14 +580,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    78,    78,    84,    89,    94,    99,   100,   101,   102,
-     105,   110,   116,   123,   126,   133,   143,   151,   162,   170,
-     185,   186,   197,   201,   204,   210,   213,   217,   220,   226,
-     229,   239,   249,   252,   259,   263,   266,   272,   279,   283,
-     286,   287,   288,   291,   301,   302,   307,   316,   317,   318,
-     321,   330,   342,   357,   371,   375,   378,   384,   387,   396,
-     397,   398,   399,   400,   401,   402,   403,   404,   405,   406,
-     407
+       0,    80,    80,    86,    87,    89,    94,    99,   104,   105,
+     106,   107,   110,   115,   121,   132,   135,   147,   162,   170,
+     181,   189,   207,   208,   221,   225,   228,   234,   237,   241,
+     244,   250,   253,   266,   279,   282,   292,   296,   299,   308,
+     315,   319,   322,   323,   324,   327,   337,   338,   343,   352,
+     358,   359,   362,   374,   389,   409,   428,   432,   435,   441,
+     444,   456,   457,   458,   459,   460,   461,   462,   463,   464,
+     465,   466,   467
 };
 #endif
 
@@ -608,17 +612,17 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "TK_RBRACE", "TK_DOT", "TK_PLUS", "TK_MINUS", "TK_MULTI", "TK_DIV",
   "TK_EQU", "TK_NEQU", "TK_LT", "TK_LEQU", "TK_GT", "TK_GEQU", "TK_AND",
   "TK_OR", "TK_ASSIGN", "TK_IDENT", "TK_INTEGER", "TK_STRING", "UMINUS",
-  "PREFER", "$accept", "stmt", "expr", "exprsfx", "primaryexpr", "exprseq",
-  "exprseqsfx", "exprlist", "exprlistsfx", "fieldlist", "fieldlistsfx",
-  "lvalue", "indexlist", "index", "declist", "dec", "typedec", "typeval",
-  "typeid", "vardec", "funcdec", "typefields", "typefieldsfx", "typefield",
-  "binoper", YY_NULLPTR
+  "PREFER", "$accept", "stmt", "entersc", "leavesc", "expr", "exprsfx",
+  "primaryexpr", "exprseq", "exprseqsfx", "exprlist", "exprlistsfx",
+  "fieldlist", "fieldlistsfx", "lvalue", "indexlist", "index", "declist",
+  "dec", "typedec", "typeval", "typeid", "vardec", "funcdec", "typefields",
+  "typefieldsfx", "typefield", "binoper", YY_NULLPTR
   };
   return yy_sname[yysymbol];
 }
 #endif
 
-#define YYPACT_NINF (-75)
+#define YYPACT_NINF (-94)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -632,20 +636,22 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       2,   -75,    18,     2,   -75,     2,   -44,     2,     2,    15,
-     -75,   -75,     9,   -75,    58,   -32,   -12,     8,   -11,    20,
-      18,   -75,   -75,   -75,    22,    21,    -1,    30,    19,   -75,
-       2,     2,    10,    11,   -75,    -7,   -75,   -75,   -75,   -75,
-     -75,   -75,   -75,   -75,   -75,   -75,   -75,   -75,   -75,   -75,
-       2,     2,   -16,   -75,   -75,   -75,    23,    33,     2,   -75,
-       2,     2,     2,     2,   -75,   -75,    42,    39,    38,    31,
-      40,   -75,     2,   -75,   -75,   -75,     8,     2,    12,    24,
-      61,    52,   -75,    53,    30,     2,   -75,   -75,    60,     2,
-     -75,    47,    32,   -75,    65,    24,   -75,   -75,    56,    54,
-      59,   -75,     2,     2,   -75,    42,     2,    62,   -75,     2,
-       8,    57,     8,   -13,    24,   -75,   -75,    64,   -75,   -75,
-      41,   -75,   -75,   -75,   -75,   -75,     8,     2,    59,     2,
-      68,    69,   -75,   -75,   -75,     2,     2,    62,   -75,   -75
+      16,   -94,   -94,   -94,   -94,   -94,   -94,    16,    16,    39,
+     -94,   -94,    12,   -94,    86,   -25,    64,    16,    16,   -24,
+      -2,    13,   -94,    16,    16,    -5,     2,   -94,     1,   -94,
+     -94,   -94,   -94,   -94,   -94,   -94,   -94,   -94,   -94,   -94,
+     -94,   -94,   -94,    16,    16,     5,    -3,   -94,    15,    64,
+     -94,   -94,   -94,    23,    28,    10,    16,   -94,   -94,    36,
+      33,    32,    31,    43,   -94,    16,   -94,   -94,   -94,   -18,
+     -94,   -94,   -94,    38,    24,    16,   -94,    16,    16,    16,
+      -2,    16,   -94,   -94,    63,    16,   -94,    52,    -3,    16,
+       8,    57,    73,    68,   -94,    65,   -94,    36,    16,    66,
+     -94,    46,   -94,    74,    47,   -94,   -94,    47,   -94,    16,
+     -94,   -94,    16,   -94,   -94,    48,   -94,    16,    -3,    71,
+      61,    75,    69,   -94,   -94,    78,    67,   -94,   -94,    -3,
+     -94,    47,   -94,    -7,   -94,    16,    16,   -94,    75,    -3,
+      16,   -94,    66,   -94,    70,   -94,   -94,   -94,    16,   -94,
+     -94,   -94
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -653,36 +659,38 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     8,    39,     0,    20,     0,     0,    23,     0,    35,
-       7,     6,     0,     2,     5,     9,     0,     0,     0,     0,
-      39,    40,    41,    42,     0,     0,     0,    25,     0,    10,
-      27,     0,     0,     0,    33,    35,     1,    59,    61,    60,
-      62,    63,    64,    65,    67,    66,    68,    69,    70,     3,
-       0,     0,     0,    48,    49,    47,     0,     0,    23,    38,
-       0,     0,     0,     0,    22,    13,    29,     0,     0,     0,
-       0,    36,     0,    34,     4,    11,     0,     0,     0,    55,
-       0,    16,    18,     0,    25,     0,    26,    12,    37,     0,
-      14,     0,     0,    50,     0,    55,    43,    44,     0,     0,
-      57,    21,     0,     0,    24,    29,     0,    32,    37,     0,
-       0,     0,     0,     0,     0,    54,    17,     0,    28,    15,
-       0,    30,    51,    46,    45,    58,     0,     0,    57,     0,
-       0,     0,    53,    56,    19,     0,     0,    32,    52,    31
+       0,    10,     3,     3,    22,     3,     3,    25,     0,    37,
+       9,     8,     0,     2,     7,    11,    41,     0,     0,     0,
+      27,     0,    12,    29,     0,     0,     0,    35,    37,     1,
+      61,    63,    62,    64,    65,    66,    67,    69,    68,    70,
+      71,    72,     5,     0,     0,     0,     0,     3,     0,    41,
+      42,    43,    44,     0,     0,     0,     0,    24,    15,    31,
+       0,     0,     0,     0,    38,     0,    36,     6,    13,     0,
+      50,    51,    49,     0,     0,    25,    40,     0,     0,     0,
+      27,     0,    28,    14,    39,     0,    16,     0,     0,     0,
+       0,     0,     0,     4,     4,     0,    26,    31,     0,    34,
+      39,     0,    52,     0,    57,    45,    46,    57,     4,     0,
+      18,    20,     0,    30,    17,     0,    32,     0,     0,     0,
+       0,    59,     0,    23,     4,     0,     0,    53,    48,     0,
+      47,     0,    56,     0,    19,     0,     0,    60,    59,     0,
+       0,     4,    34,    58,     0,     4,    21,    33,     0,    55,
+       4,    54
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -75,   -75,     0,   -75,   -75,    25,     4,   -75,     3,   -75,
-     -30,   -75,    75,   -75,    91,   -75,   -75,   -75,   -74,   -75,
-     -75,    17,   -15,     1,   -75
+     -94,   -94,     4,   -93,     0,   -94,   -94,    25,    19,   -94,
+       7,   -94,   -41,   -94,    77,   -94,    53,   -94,   -94,   -94,
+     -84,   -94,   -94,     3,   -31,   -23,   -94
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int8 yydefgoto[] =
+static const yytype_uint8 yydefgoto[] =
 {
-       0,    12,    27,    49,    14,    28,    64,    67,    86,    70,
-     121,    15,    34,    35,    19,    20,    21,    96,    56,    22,
-      23,    99,   115,   100,    50
+       0,    12,    16,   110,    20,    42,    14,    21,    57,    60,
+      82,    63,   116,    15,    27,    28,    48,    49,    50,   105,
+      73,    51,    52,   120,   132,   121,    43
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -690,38 +698,40 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      13,    26,    92,    24,    97,    25,     1,    76,    29,    36,
-     126,     2,    51,    53,    54,    94,     3,    53,    54,     4,
-      72,     5,     6,   127,    33,    16,    17,     7,    77,    18,
-      66,    68,    58,    52,    57,     8,   123,    60,   125,    61,
-      30,    95,    31,    62,    32,    65,    33,     9,    10,    11,
-      74,    75,   131,    55,    63,    69,    71,    55,    79,    78,
-      81,    82,    83,    84,    85,    87,    88,    89,   102,    98,
-      90,   101,    91,   106,   103,   108,   109,    93,   110,   112,
-     113,   114,   129,    80,   120,   105,   130,   124,   104,   107,
-      37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
-      47,    48,   116,   117,   135,   136,   119,   139,   118,   122,
-      73,    59,   111,   133,     0,   128,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,   132,     0,   134,
-       0,     0,     0,     0,     0,   137,   138
+      13,   111,    70,    71,   101,    88,   106,    17,    22,    18,
+      19,   103,    29,    70,    71,   123,   139,    53,    54,    44,
+       1,    55,    56,    59,    61,     2,    89,    75,    65,   140,
+       3,   134,    26,     4,   128,     5,     6,   104,    77,    58,
+      62,     7,    72,    67,    68,   137,    78,    64,   146,     8,
+      69,    74,   149,    72,    79,   144,    80,   151,    81,    83,
+      84,     9,    10,    11,    23,    87,    24,    85,    25,    91,
+      26,    45,    46,    86,    90,    47,    98,    93,    94,    95,
+     100,    97,   107,   108,   109,    99,   112,   118,   115,   102,
+     117,   130,   119,   126,   129,   133,   135,   131,   114,    96,
+      92,   147,    76,   136,   113,    66,   148,   143,   138,   124,
+     122,     0,   125,     0,     0,     0,     0,   127,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+       0,     0,     0,     0,     0,   141,   142,     0,     0,     0,
+     145,     0,     0,     0,     0,     0,     0,     0,   150
 };
 
 static const yytype_int16 yycheck[] =
 {
-       0,    45,    76,     3,    78,     5,     4,    23,     8,     0,
-      23,     9,    44,     5,     6,     3,    14,     5,     6,    17,
-      27,    19,    20,    36,    31,     7,     8,    25,    44,    11,
-      30,    31,    12,    45,    45,    33,   110,    15,   112,    18,
-      25,    29,    27,    44,    29,    26,    31,    45,    46,    47,
-      50,    51,   126,    45,    24,    45,    45,    45,    25,    36,
-      60,    61,    62,    63,    22,    26,    28,    36,    16,    45,
-      30,    10,    72,    13,    21,    28,    44,    77,    13,    23,
-      26,    22,    18,    58,    22,    85,    45,    30,    84,    89,
-      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
-      42,    43,   102,   103,    36,    36,   106,   137,   105,   109,
-      35,    20,    95,   128,    -1,   114,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,   127,    -1,   129,
-      -1,    -1,    -1,    -1,    -1,   135,   136
+       0,    94,     5,     6,    88,    23,    90,     3,     8,     5,
+       6,     3,     0,     5,     6,   108,    23,    17,    18,    44,
+       4,    45,    24,    23,    24,     9,    44,    12,    27,    36,
+      14,   124,    31,    17,   118,    19,    20,    29,    15,    26,
+      45,    25,    45,    43,    44,   129,    18,    45,   141,    33,
+      45,    47,   145,    45,    44,   139,    56,   150,    22,    26,
+      28,    45,    46,    47,    25,    65,    27,    36,    29,    45,
+      31,     7,     8,    30,    36,    11,    13,    77,    78,    79,
+      28,    81,    25,    10,    16,    85,    21,    13,    22,    89,
+      44,    30,    45,    45,    23,    26,    18,    22,    98,    80,
+      75,   142,    49,    36,    97,    28,    36,   138,   131,   109,
+     107,    -1,   112,    -1,    -1,    -1,    -1,   117,    32,    33,
+      34,    35,    36,    37,    38,    39,    40,    41,    42,    43,
+      -1,    -1,    -1,    -1,    -1,   135,   136,    -1,    -1,    -1,
+     140,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   148
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -729,45 +739,47 @@ static const yytype_int16 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     4,     9,    14,    17,    19,    20,    25,    33,    45,
-      46,    47,    51,    52,    54,    61,     7,     8,    11,    64,
-      65,    66,    69,    70,    52,    52,    45,    52,    55,    52,
-      25,    27,    29,    31,    62,    63,     0,    32,    33,    34,
-      35,    36,    37,    38,    39,    40,    41,    42,    43,    53,
-      74,    44,    45,     5,     6,    45,    68,    45,    12,    64,
-      15,    18,    44,    24,    56,    26,    52,    57,    52,    45,
-      59,    45,    27,    62,    52,    52,    23,    44,    36,    25,
-      55,    52,    52,    52,    52,    22,    58,    26,    28,    36,
-      30,    52,    68,    52,     3,    29,    67,    68,    45,    71,
-      73,    10,    16,    21,    56,    52,    13,    52,    28,    44,
-      13,    71,    23,    26,    22,    72,    52,    52,    58,    52,
-      22,    60,    52,    68,    30,    68,    23,    36,    73,    18,
-      45,    68,    52,    72,    52,    36,    36,    52,    52,    60
+      46,    47,    51,    54,    56,    63,    52,    52,    52,    52,
+      54,    57,    54,    25,    27,    29,    31,    64,    65,     0,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    55,    76,    44,     7,     8,    11,    66,    67,
+      68,    71,    72,    54,    54,    45,    24,    58,    26,    54,
+      59,    54,    45,    61,    45,    27,    64,    54,    54,    45,
+       5,     6,    45,    70,    52,    12,    66,    15,    18,    44,
+      54,    22,    60,    26,    28,    36,    30,    54,    23,    44,
+      36,    45,    57,    54,    54,    54,    58,    54,    13,    54,
+      28,    70,    54,     3,    29,    69,    70,    25,    10,    16,
+      53,    53,    21,    60,    54,    22,    62,    44,    13,    45,
+      73,    75,    73,    53,    54,    54,    45,    54,    70,    23,
+      30,    22,    74,    26,    53,    18,    36,    70,    75,    23,
+      36,    54,    54,    74,    70,    54,    53,    62,    36,    53,
+      54,    53
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    50,    51,    52,    53,    53,    54,    54,    54,    54,
-      54,    54,    54,    54,    54,    54,    54,    54,    54,    54,
-      54,    54,    55,    55,    56,    56,    57,    57,    58,    58,
-      59,    60,    60,    61,    62,    62,    63,    63,    64,    64,
-      65,    65,    65,    66,    67,    67,    67,    68,    68,    68,
-      69,    69,    70,    70,    71,    71,    72,    72,    73,    74,
-      74,    74,    74,    74,    74,    74,    74,    74,    74,    74,
-      74
+       0,    50,    51,    52,    53,    54,    55,    55,    56,    56,
+      56,    56,    56,    56,    56,    56,    56,    56,    56,    56,
+      56,    56,    56,    56,    57,    57,    58,    58,    59,    59,
+      60,    60,    61,    62,    62,    63,    64,    64,    65,    65,
+      66,    66,    67,    67,    67,    68,    69,    69,    69,    70,
+      70,    70,    71,    71,    72,    72,    73,    73,    74,    74,
+      75,    76,    76,    76,    76,    76,    76,    76,    76,    76,
+      76,    76,    76
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     2,     2,     0,     1,     1,     1,     1,
-       2,     3,     4,     3,     4,     6,     4,     6,     4,     8,
-       1,     5,     2,     0,     3,     0,     2,     0,     3,     0,
-       4,     5,     0,     2,     2,     0,     2,     3,     2,     0,
-       1,     1,     1,     4,     1,     3,     3,     1,     1,     1,
-       4,     6,     9,     7,     2,     0,     3,     0,     3,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1
+       0,     2,     1,     0,     0,     2,     2,     0,     1,     1,
+       1,     1,     2,     3,     4,     3,     4,     6,     6,     8,
+       6,    10,     1,     7,     2,     0,     3,     0,     2,     0,
+       3,     0,     4,     5,     0,     2,     2,     0,     2,     3,
+       2,     0,     1,     1,     1,     4,     1,     3,     3,     1,
+       1,     1,     4,     6,    11,     9,     2,     0,     3,     0,
+       3,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1
 };
 
 
@@ -1452,637 +1464,704 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* stmt: expr  */
-#line 78 "parser.y"
+#line 80 "parser.y"
            {
-    (yyval.astnode) = (yyvsp[0].astnode);
+    (yyval.ast) = (yyvsp[0].ast);
     stxtree_t* gtree = stxtree_get();
-    gtree->root = (yyval.astnode);
+    gtree->root = (yyval.ast);
 }
-#line 1462 "parser.tab.c"
+#line 1474 "parser.tab.c"
     break;
 
-  case 3: /* expr: primaryexpr exprsfx  */
-#line 84 "parser.y"
-                          {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    (yyval.astnode) = (yyvsp[-1].astnode);
-}
-#line 1471 "parser.tab.c"
+  case 3: /* entersc: %empty  */
+#line 86 "parser.y"
+                       { scope_create(); }
+#line 1480 "parser.tab.c"
     break;
 
-  case 4: /* exprsfx: binoper expr  */
+  case 4: /* leavesc: %empty  */
+#line 87 "parser.y"
+                       { scope_close(); }
+#line 1486 "parser.tab.c"
+    break;
+
+  case 5: /* expr: primaryexpr exprsfx  */
 #line 89 "parser.y"
-                      { 
-    stxnode_t* opnode = (yyvsp[-1].astnode);
-    stxtree_append_node(opnode, (yyvsp[0].astnode));
-    (yyval.astnode) = opnode;
- }
-#line 1481 "parser.tab.c"
-    break;
-
-  case 5: /* exprsfx: %empty  */
-#line 94 "parser.y"
-                    {
-        (yyval.astnode) = stxtree_create_node(YYEMPTY);
-    }
-#line 1489 "parser.tab.c"
-    break;
-
-  case 6: /* primaryexpr: TK_STRING  */
-#line 99 "parser.y"
-                        { (yyval.astnode) = stxtree_create_string_node((yyvsp[0].sval)); }
+                          {
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    (yyval.ast) = (yyvsp[-1].ast);
+}
 #line 1495 "parser.tab.c"
     break;
 
-  case 7: /* primaryexpr: TK_INTEGER  */
-#line 100 "parser.y"
-                 { (yyval.astnode) = stxtree_create_integer_node((yyvsp[0].ival)); }
-#line 1501 "parser.tab.c"
+  case 6: /* exprsfx: binoper expr  */
+#line 94 "parser.y"
+                      { 
+    stxnode_t* opnode = (yyvsp[-1].ast);
+    stxtree_append_node(opnode, (yyvsp[0].ast));
+    (yyval.ast) = opnode;
+ }
+#line 1505 "parser.tab.c"
     break;
 
-  case 8: /* primaryexpr: TK_NIL  */
-#line 101 "parser.y"
-             { (yyval.astnode) = stxtree_create_node(TK_NIL); }
-#line 1507 "parser.tab.c"
-    break;
-
-  case 9: /* primaryexpr: lvalue  */
-#line 102 "parser.y"
-             {
-        (yyval.astnode) = (yyvsp[0].astnode);
+  case 7: /* exprsfx: %empty  */
+#line 99 "parser.y"
+                    {
+        (yyval.ast) = stxtree_create_node(YYEMPTY);
     }
-#line 1515 "parser.tab.c"
+#line 1513 "parser.tab.c"
     break;
 
-  case 10: /* primaryexpr: TK_MINUS expr  */
+  case 8: /* primaryexpr: TK_STRING  */
+#line 104 "parser.y"
+                        { (yyval.ast) = stxtree_create_string_node((yyvsp[0].sval)); }
+#line 1519 "parser.tab.c"
+    break;
+
+  case 9: /* primaryexpr: TK_INTEGER  */
 #line 105 "parser.y"
-                                 { 
-        stxnode_t* msnode = stxtree_create_node(TK_MINUS);
-        stxtree_append_node(msnode, (yyvsp[0].astnode));
-        (yyval.astnode) = msnode;
-    }
+                 { (yyval.ast) = stxtree_create_integer_node((yyvsp[0].ival)); }
 #line 1525 "parser.tab.c"
     break;
 
-  case 11: /* primaryexpr: lvalue TK_ASSIGN expr  */
+  case 10: /* primaryexpr: TK_NIL  */
+#line 106 "parser.y"
+             { (yyval.ast) = stxtree_create_node(TK_NIL); }
+#line 1531 "parser.tab.c"
+    break;
+
+  case 11: /* primaryexpr: lvalue  */
+#line 107 "parser.y"
+             {
+        (yyval.ast) = (yyvsp[0].ast);
+    }
+#line 1539 "parser.tab.c"
+    break;
+
+  case 12: /* primaryexpr: TK_MINUS expr  */
 #line 110 "parser.y"
+                                 { 
+        stxnode_t* msnode = stxtree_create_node(TK_MINUS);
+        stxtree_append_node(msnode, (yyvsp[0].ast));
+        (yyval.ast) = msnode;
+    }
+#line 1549 "parser.tab.c"
+    break;
+
+  case 13: /* primaryexpr: lvalue TK_ASSIGN expr  */
+#line 115 "parser.y"
                             {
         stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
-        stxtree_append_node(assnode, (yyvsp[-2].astnode));
-        stxtree_append_node(assnode, (yyvsp[0].astnode));
-        (yyval.astnode) = assnode;
+        stxtree_append_node(assnode, (yyvsp[-2].ast));
+        stxtree_append_node(assnode, (yyvsp[0].ast));
+        (yyval.ast) = assnode;
     }
-#line 1536 "parser.tab.c"
+#line 1560 "parser.tab.c"
     break;
 
-  case 12: /* primaryexpr: TK_IDENT TK_LPAREN exprlist TK_RPAREN  */
-#line 116 "parser.y"
+  case 14: /* primaryexpr: TK_IDENT TK_LPAREN exprlist TK_RPAREN  */
+#line 121 "parser.y"
                                             {
-        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym));
+        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym)->txt);
+        scope_t* sc = scope_current();
+        idnode->sc = sc;
         stxnode_t* lparen = stxtree_create_node(TK_LPAREN);
-        stxtree_append_node(lparen, (yyvsp[-1].astnode));
+        stxnode_t* rparen = stxtree_create_node(TK_RPAREN);
         stxtree_append_node(idnode, lparen);
-        (yyval.astnode) = idnode;
+        stxtree_append_node(idnode, (yyvsp[-1].ast));
+        stxtree_append_node(idnode, rparen);
+        (yyval.ast) = idnode;
     }
-#line 1548 "parser.tab.c"
+#line 1576 "parser.tab.c"
     break;
 
-  case 13: /* primaryexpr: TK_LPAREN exprseq TK_RPAREN  */
-#line 123 "parser.y"
+  case 15: /* primaryexpr: TK_LPAREN exprseq TK_RPAREN  */
+#line 132 "parser.y"
                                   {
-        (yyval.astnode) = (yyvsp[-1].astnode);
+        (yyval.ast) = (yyvsp[-1].ast); // 这里有点问题
     }
-#line 1556 "parser.tab.c"
+#line 1584 "parser.tab.c"
     break;
 
-  case 14: /* primaryexpr: TK_IDENT TK_LBRACE fieldlist TK_RBRACE  */
-#line 126 "parser.y"
+  case 16: /* primaryexpr: TK_IDENT TK_LBRACE fieldlist TK_RBRACE  */
+#line 135 "parser.y"
                                              {
-        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym));
+        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym)->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, (yyvsp[-3].sym));
+        idnode->sc = sc;
         stxnode_t* lbrace = stxtree_create_node(TK_LBRACE);
-        stxtree_append_node(lbrace, (yyvsp[-1].astnode));
+        stxnode_t* rbrace = stxtree_create_node(TK_RBRACE);
         stxtree_append_node(idnode, lbrace);
-        (yyval.astnode) = idnode;
+        stxtree_append_node(idnode, (yyvsp[-1].ast));
+        stxtree_append_node(idnode, rbrace);
+        (yyval.ast) = idnode;
     }
-#line 1568 "parser.tab.c"
+#line 1601 "parser.tab.c"
     break;
 
-  case 15: /* primaryexpr: TK_IDENT TK_LBRACKET expr TK_RBRACKET TK_OF expr  */
-#line 133 "parser.y"
+  case 17: /* primaryexpr: TK_IDENT TK_LBRACKET expr TK_RBRACKET TK_OF expr  */
+#line 147 "parser.y"
                                                        {
-        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-5].sym));
+        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-5].sym)->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, (yyvsp[-5].sym));
+        idnode->sc = sc;
         stxnode_t* lbracket = stxtree_create_node(TK_LBRACKET);
-        stxtree_append_node(lbracket, (yyvsp[-3].astnode));
+        stxnode_t* rbracket = stxtree_create_node(TK_RBRACKET);
         stxnode_t* ofnode = stxtree_create_node(TK_OF);
-        stxtree_append_node(ofnode, (yyvsp[0].astnode));
         stxtree_append_node(idnode, lbracket);
+        stxtree_append_node(idnode, (yyvsp[-3].ast));
+        stxtree_append_node(idnode, rbracket);
         stxtree_append_node(idnode, ofnode);
-        (yyval.astnode) = idnode;
+        stxtree_append_node(idnode, (yyvsp[0].ast));
+        (yyval.ast) = idnode;
     }
-#line 1583 "parser.tab.c"
+#line 1621 "parser.tab.c"
     break;
 
-  case 16: /* primaryexpr: TK_IF expr TK_THEN expr  */
-#line 143 "parser.y"
-                              {
+  case 18: /* primaryexpr: TK_IF entersc expr TK_THEN expr leavesc  */
+#line 162 "parser.y"
+                                              {
         stxnode_t* ifnode = stxtree_create_node(TK_IF);
         stxnode_t* thnode = stxtree_create_node(TK_THEN);
-        stxtree_append_node(thnode, (yyvsp[0].astnode));
-        stxtree_append_node(ifnode, (yyvsp[-2].astnode));
+        stxtree_append_node(thnode, (yyvsp[-1].ast));
+        stxtree_append_node(ifnode, (yyvsp[-3].ast));
         stxtree_append_node(ifnode, thnode);
-        (yyval.astnode) = ifnode;
+        (yyval.ast) = ifnode;
     }
-#line 1596 "parser.tab.c"
+#line 1634 "parser.tab.c"
     break;
 
-  case 17: /* primaryexpr: TK_IF expr TK_THEN expr TK_ELSE expr  */
-#line 151 "parser.y"
-                                           {
+  case 19: /* primaryexpr: TK_IF entersc expr TK_THEN expr TK_ELSE expr leavesc  */
+#line 170 "parser.y"
+                                                           {
         stxnode_t* ifnode = stxtree_create_node(TK_IF);
         stxnode_t* thnode = stxtree_create_node(TK_THEN);
         stxnode_t* elnode = stxtree_create_node(TK_ELSE);
-        stxtree_append_node(elnode, (yyvsp[0].astnode));
-        stxtree_append_node(thnode, (yyvsp[-2].astnode));
-        stxtree_append_node(ifnode, (yyvsp[-4].astnode));
+        stxtree_append_node(elnode, (yyvsp[-1].ast));
+        stxtree_append_node(thnode, (yyvsp[-3].ast));
+        stxtree_append_node(ifnode, (yyvsp[-5].ast));
         stxtree_append_node(ifnode, thnode);
         stxtree_append_node(ifnode, elnode);
-        (yyval.astnode) = ifnode;
+        (yyval.ast) = ifnode;
     }
-#line 1612 "parser.tab.c"
+#line 1650 "parser.tab.c"
     break;
 
-  case 18: /* primaryexpr: TK_WHILE expr TK_DO expr  */
-#line 162 "parser.y"
-                               {
+  case 20: /* primaryexpr: TK_WHILE entersc expr TK_DO expr leavesc  */
+#line 181 "parser.y"
+                                               {
         stxnode_t* whnode = stxtree_create_node(TK_WHILE);
         stxnode_t* donode = stxtree_create_node(TK_DO);
-        stxtree_append_node(donode, (yyvsp[0].astnode));
-        stxtree_append_node(whnode, (yyvsp[-2].astnode));
+        stxtree_append_node(whnode, (yyvsp[-3].ast));
+        stxtree_append_node(donode, (yyvsp[-1].ast));
         stxtree_append_node(whnode, donode);
-        (yyval.astnode) = whnode;
+        (yyval.ast) = whnode;
     }
-#line 1625 "parser.tab.c"
+#line 1663 "parser.tab.c"
     break;
 
-  case 19: /* primaryexpr: TK_FOR TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr  */
-#line 170 "parser.y"
-                                                           {
+  case 21: /* primaryexpr: TK_FOR entersc TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr leavesc  */
+#line 189 "parser.y"
+                                                                           {
         stxnode_t* fornode = stxtree_create_node(TK_FOR);
         stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
-        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-6].sym));
-        stxtree_append_node(assnode, idnode);
-        stxtree_append_node(assnode, (yyvsp[-4].astnode));
+        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-7].sym)->txt);
+        scope_t* cur_sc = scope_current();
+        scope_add_sym(cur_sc, (yyvsp[-7].sym));
+        idnode->sc = scope_current();
         stxnode_t* tonode = stxtree_create_node(TK_TO);
-        stxtree_append_node(tonode, (yyvsp[-2].astnode));
+        stxtree_append_node(tonode, (yyvsp[-5].ast));
+        stxtree_append_node(tonode, (yyvsp[-3].ast));
+        stxtree_append_node(assnode, idnode);
+        stxtree_append_node(assnode, tonode);
         stxnode_t* donode = stxtree_create_node(TK_DO);
-        stxtree_append_node(donode, (yyvsp[0].astnode));
+        stxtree_append_node(donode, (yyvsp[-1].ast));
         stxtree_append_node(fornode, assnode);
-        stxtree_append_node(fornode, tonode);
         stxtree_append_node(fornode, donode);
-        (yyval.astnode) = fornode;
+        (yyval.ast) = fornode;
     }
-#line 1645 "parser.tab.c"
+#line 1686 "parser.tab.c"
     break;
 
-  case 20: /* primaryexpr: TK_BREAK  */
-#line 185 "parser.y"
-               { (yyval.astnode) = stxtree_create_node(TK_BREAK); }
-#line 1651 "parser.tab.c"
+  case 22: /* primaryexpr: TK_BREAK  */
+#line 207 "parser.y"
+               { (yyval.ast) = stxtree_create_node(TK_BREAK); }
+#line 1692 "parser.tab.c"
     break;
 
-  case 21: /* primaryexpr: TK_LET declist TK_IN exprseq TK_END  */
-#line 186 "parser.y"
-                                          {
+  case 23: /* primaryexpr: TK_LET entersc declist TK_IN exprseq TK_END leavesc  */
+#line 208 "parser.y"
+                                                          {
         stxnode_t* letnode = stxtree_create_node(TK_LET);
         stxnode_t* innode = stxtree_create_node(TK_IN);
-        stxtree_append_node(letnode, (yyvsp[-3].astnode));
+        stxnode_t* endnode = stxtree_create_node(TK_END);
+        stxtree_append_node(letnode, (yyvsp[-4].ast));
         stxtree_append_node(letnode, innode);
-        stxtree_append_node(letnode, (yyvsp[-1].astnode));
-        (yyval.astnode) = letnode;
+        stxtree_append_node(letnode, (yyvsp[-2].ast));
+        stxtree_append_node(letnode, endnode);
+        (yyval.ast) = letnode;
     }
-#line 1664 "parser.tab.c"
+#line 1707 "parser.tab.c"
     break;
 
-  case 22: /* exprseq: expr exprseqsfx  */
-#line 197 "parser.y"
+  case 24: /* exprseq: expr exprseqsfx  */
+#line 221 "parser.y"
                          {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    (yyval.astnode) = (yyvsp[-1].astnode);
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    (yyval.ast) = (yyvsp[-1].ast);
 }
-#line 1673 "parser.tab.c"
+#line 1716 "parser.tab.c"
     break;
 
-  case 23: /* exprseq: %empty  */
-#line 201 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1679 "parser.tab.c"
-    break;
-
-  case 24: /* exprseqsfx: TK_SEMICOLON expr exprseqsfx  */
-#line 204 "parser.y"
-                                         {
-    stxnode_t* scnode = stxtree_create_node(TK_SEMICOLON);
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    stxtree_append_node(scnode, (yyvsp[-1].astnode));
-    (yyval.astnode) = scnode;
-}
-#line 1690 "parser.tab.c"
-    break;
-
-  case 25: /* exprseqsfx: %empty  */
-#line 210 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1696 "parser.tab.c"
-    break;
-
-  case 26: /* exprlist: expr exprlistsfx  */
-#line 213 "parser.y"
-                           {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    (yyval.astnode) = (yyvsp[-1].astnode);
-}
-#line 1705 "parser.tab.c"
-    break;
-
-  case 27: /* exprlist: %empty  */
-#line 217 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1711 "parser.tab.c"
-    break;
-
-  case 28: /* exprlistsfx: TK_COMMA expr exprlistsfx  */
-#line 220 "parser.y"
-                                       {
-    stxnode_t* cmnode = stxtree_create_node(TK_COMMA);
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    stxtree_append_node(cmnode, (yyvsp[-1].astnode));
-    (yyval.astnode) = cmnode;
-}
+  case 25: /* exprseq: %empty  */
+#line 225 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
 #line 1722 "parser.tab.c"
     break;
 
-  case 29: /* exprlistsfx: %empty  */
-#line 226 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1728 "parser.tab.c"
-    break;
-
-  case 30: /* fieldlist: TK_IDENT TK_EQU expr fieldlistsfx  */
-#line 229 "parser.y"
-                                             {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    stxnode_t* equnode = stxtree_create_node(TK_EQU);
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym));
-    stxtree_append_node(equnode, idnode);
-    stxtree_append_node(equnode, (yyvsp[-1].astnode));
-    (yyval.astnode) = equnode;
+  case 26: /* exprseqsfx: TK_SEMICOLON expr exprseqsfx  */
+#line 228 "parser.y"
+                                         {
+    stxnode_t* scnode = stxtree_create_node(TK_SEMICOLON);
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    stxtree_append_node(scnode, (yyvsp[-1].ast));
+    (yyval.ast) = scnode;
 }
-#line 1741 "parser.tab.c"
+#line 1733 "parser.tab.c"
     break;
 
-  case 31: /* fieldlistsfx: TK_COMMA TK_IDENT TK_EQU expr fieldlistsfx  */
-#line 239 "parser.y"
-                                                         {
+  case 27: /* exprseqsfx: %empty  */
+#line 234 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 1739 "parser.tab.c"
+    break;
+
+  case 28: /* exprlist: expr exprlistsfx  */
+#line 237 "parser.y"
+                           {
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    (yyval.ast) = (yyvsp[-1].ast);
+}
+#line 1748 "parser.tab.c"
+    break;
+
+  case 29: /* exprlist: %empty  */
+#line 241 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 1754 "parser.tab.c"
+    break;
+
+  case 30: /* exprlistsfx: TK_COMMA expr exprlistsfx  */
+#line 244 "parser.y"
+                                       {
     stxnode_t* cmnode = stxtree_create_node(TK_COMMA);
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym));
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    stxtree_append_node(cmnode, (yyvsp[-1].ast));
+    (yyval.ast) = cmnode;
+}
+#line 1765 "parser.tab.c"
+    break;
+
+  case 31: /* exprlistsfx: %empty  */
+#line 250 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 1771 "parser.tab.c"
+    break;
+
+  case 32: /* fieldlist: TK_IDENT TK_EQU expr fieldlistsfx  */
+#line 253 "parser.y"
+                                             {
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym)->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[-3].sym));
+    idnode->sc = sc;
     stxtree_append_node(equnode, idnode);
-    stxtree_append_node(equnode, (yyvsp[-1].astnode));
-    stxtree_append_node(cmnode, equnode);
-    (yyval.astnode) = cmnode;
+    stxtree_append_node(equnode, (yyvsp[-1].ast));
+    (yyval.ast) = equnode;
 }
-#line 1756 "parser.tab.c"
-    break;
-
-  case 32: /* fieldlistsfx: %empty  */
-#line 249 "parser.y"
-                    {  (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1762 "parser.tab.c"
-    break;
-
-  case 33: /* lvalue: TK_IDENT indexlist  */
-#line 252 "parser.y"
-                           {
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-1].sym));
-    stxtree_append_node(idnode, (yyvsp[0].astnode));
-    (yyval.astnode) = idnode;
-}
-#line 1772 "parser.tab.c"
-    break;
-
-  case 34: /* indexlist: index indexlist  */
-#line 259 "parser.y"
-                           {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    (yyval.astnode) = (yyvsp[-1].astnode);
-}
-#line 1781 "parser.tab.c"
-    break;
-
-  case 35: /* indexlist: %empty  */
-#line 263 "parser.y"
-                    {  (yyval.astnode) = stxtree_create_node(YYEMPTY); }
 #line 1787 "parser.tab.c"
     break;
 
-  case 36: /* index: TK_DOT TK_IDENT  */
+  case 33: /* fieldlistsfx: TK_COMMA TK_IDENT TK_EQU expr fieldlistsfx  */
 #line 266 "parser.y"
+                                                         {
+    stxnode_t* cmnode = stxtree_create_node(TK_COMMA);
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-3].sym)->txt);
+    stxnode_t* equnode = stxtree_create_node(TK_EQU);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[-3].sym));
+    idnode->sc = sc;
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    stxtree_append_node(equnode, idnode);
+    stxtree_append_node(equnode, (yyvsp[-1].ast));
+    stxtree_append_node(cmnode, equnode);
+    (yyval.ast) = cmnode;
+}
+#line 1805 "parser.tab.c"
+    break;
+
+  case 34: /* fieldlistsfx: %empty  */
+#line 279 "parser.y"
+                    {  (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 1811 "parser.tab.c"
+    break;
+
+  case 35: /* lvalue: TK_IDENT indexlist  */
+#line 282 "parser.y"
+                           {
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-1].sym)->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[-1].sym));
+    idnode->sc = sc;
+    stxtree_append_node(idnode, (yyvsp[0].ast));
+    (yyval.ast) = idnode;
+}
+#line 1824 "parser.tab.c"
+    break;
+
+  case 36: /* indexlist: index indexlist  */
+#line 292 "parser.y"
+                           {
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    (yyval.ast) = (yyvsp[-1].ast);
+}
+#line 1833 "parser.tab.c"
+    break;
+
+  case 37: /* indexlist: %empty  */
+#line 296 "parser.y"
+                    {  (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 1839 "parser.tab.c"
+    break;
+
+  case 38: /* index: TK_DOT TK_IDENT  */
+#line 299 "parser.y"
                        {
     stxnode_t* dotnode = stxtree_create_node(TK_DOT);
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[0].sym));
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[0].sym)->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[0].sym));
+    idnode->sc = sc;
     stxtree_append_node(dotnode, idnode);
-    (yyval.astnode) = dotnode;
+    (yyval.ast) = dotnode;
 }
-#line 1798 "parser.tab.c"
+#line 1853 "parser.tab.c"
     break;
 
-  case 37: /* index: TK_LBRACKET expr TK_RBRACKET  */
-#line 272 "parser.y"
+  case 39: /* index: TK_LBRACKET expr TK_RBRACKET  */
+#line 308 "parser.y"
                                    {
         stxnode_t* lbracket = stxtree_create_node(TK_LBRACKET);
-        stxtree_append_node(lbracket, (yyvsp[-1].astnode));
-        (yyval.astnode) = lbracket;
+        stxtree_append_node(lbracket, (yyvsp[-1].ast));
+        (yyval.ast) = lbracket;
     }
-#line 1808 "parser.tab.c"
+#line 1863 "parser.tab.c"
     break;
 
-  case 38: /* declist: dec declist  */
-#line 279 "parser.y"
+  case 40: /* declist: dec declist  */
+#line 315 "parser.y"
                      {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    (yyval.astnode) = (yyvsp[-1].astnode);
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    (yyval.ast) = (yyvsp[-1].ast);
 }
-#line 1817 "parser.tab.c"
+#line 1872 "parser.tab.c"
     break;
 
-  case 39: /* declist: %empty  */
-#line 283 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1823 "parser.tab.c"
+  case 41: /* declist: %empty  */
+#line 319 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 1878 "parser.tab.c"
     break;
 
-  case 40: /* dec: typedec  */
-#line 286 "parser.y"
-             { (yyval.astnode) = (yyvsp[0].astnode); }
-#line 1829 "parser.tab.c"
+  case 42: /* dec: typedec  */
+#line 322 "parser.y"
+             { (yyval.ast) = (yyvsp[0].ast); }
+#line 1884 "parser.tab.c"
     break;
 
-  case 41: /* dec: vardec  */
-#line 287 "parser.y"
-             { (yyval.astnode) = (yyvsp[0].astnode); }
-#line 1835 "parser.tab.c"
+  case 43: /* dec: vardec  */
+#line 323 "parser.y"
+             { (yyval.ast) = (yyvsp[0].ast); }
+#line 1890 "parser.tab.c"
     break;
 
-  case 42: /* dec: funcdec  */
-#line 288 "parser.y"
-              { (yyval.astnode) = (yyvsp[0].astnode); }
-#line 1841 "parser.tab.c"
+  case 44: /* dec: funcdec  */
+#line 324 "parser.y"
+              { (yyval.ast) = (yyvsp[0].ast); }
+#line 1896 "parser.tab.c"
     break;
 
-  case 43: /* typedec: TK_TYPE typeid TK_EQU typeval  */
-#line 291 "parser.y"
+  case 45: /* typedec: TK_TYPE typeid TK_EQU typeval  */
+#line 327 "parser.y"
                                        {
     stxnode_t* typenode = stxtree_create_node(TK_TYPE);
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
-    stxtree_append_node(equnode, (yyvsp[0].astnode));
-    stxtree_append_node(equnode, (yyvsp[-2].astnode));
+    stxtree_append_node(equnode, (yyvsp[0].ast));
+    stxtree_append_node(equnode, (yyvsp[-2].ast));
     stxtree_append_node(typenode, equnode);
-    (yyval.astnode) = typenode;
+    (yyval.ast) = typenode;
 }
-#line 1854 "parser.tab.c"
+#line 1909 "parser.tab.c"
     break;
 
-  case 44: /* typeval: typeid  */
-#line 301 "parser.y"
-                { (yyval.astnode) = (yyvsp[0].astnode); }
-#line 1860 "parser.tab.c"
+  case 46: /* typeval: typeid  */
+#line 337 "parser.y"
+                { (yyval.ast) = (yyvsp[0].ast); }
+#line 1915 "parser.tab.c"
     break;
 
-  case 45: /* typeval: TK_LBRACE typefields TK_RBRACE  */
-#line 302 "parser.y"
+  case 47: /* typeval: TK_LBRACE typefields TK_RBRACE  */
+#line 338 "parser.y"
                                      {
         stxnode_t* lbrace = stxtree_create_node(TK_LBRACE);
-        stxtree_append_node(lbrace, (yyvsp[-1].astnode));
-        (yyval.astnode) = lbrace;
+        stxtree_append_node(lbrace, (yyvsp[-1].ast));
+        (yyval.ast) = lbrace;
     }
-#line 1870 "parser.tab.c"
+#line 1925 "parser.tab.c"
     break;
 
-  case 46: /* typeval: TK_ARRAY TK_OF typeid  */
-#line 307 "parser.y"
+  case 48: /* typeval: TK_ARRAY TK_OF typeid  */
+#line 343 "parser.y"
                             {
         stxnode_t* arraynode = stxtree_create_node(TK_ARRAY);
         stxnode_t* ofnode = stxtree_create_node(TK_OF);
-        stxtree_append_node(ofnode, (yyvsp[0].astnode));
+        stxtree_append_node(ofnode, (yyvsp[0].ast));
         stxtree_append_node(arraynode, ofnode);
-        (yyval.astnode) = arraynode;
+        (yyval.ast) = arraynode;
     }
-#line 1882 "parser.tab.c"
+#line 1937 "parser.tab.c"
     break;
 
-  case 47: /* typeid: TK_IDENT  */
-#line 316 "parser.y"
-                 { (yyval.astnode) = stxtree_create_ident_node((yyvsp[0].sym)); }
-#line 1888 "parser.tab.c"
+  case 49: /* typeid: TK_IDENT  */
+#line 352 "parser.y"
+                 { 
+  stxnode_t* idnode = stxtree_create_ident_node((yyvsp[0].sym)->txt); 
+  scope_t* sc = scope_current();
+  scope_add_sym(sc, (yyvsp[0].sym));
+  idnode->sc = sc;
+}
+#line 1948 "parser.tab.c"
     break;
 
-  case 48: /* typeid: TK_INT  */
-#line 317 "parser.y"
-             { (yyval.astnode) = stxtree_create_node(TK_INT); }
-#line 1894 "parser.tab.c"
+  case 50: /* typeid: TK_INT  */
+#line 358 "parser.y"
+             { (yyval.ast) = stxtree_create_node(TK_INT); }
+#line 1954 "parser.tab.c"
     break;
 
-  case 49: /* typeid: TK_STR  */
-#line 318 "parser.y"
-             { (yyval.astnode) = stxtree_create_node(TK_STR); }
-#line 1900 "parser.tab.c"
+  case 51: /* typeid: TK_STR  */
+#line 359 "parser.y"
+             { (yyval.ast) = stxtree_create_node(TK_STR); }
+#line 1960 "parser.tab.c"
     break;
 
-  case 50: /* vardec: TK_VAR TK_IDENT TK_ASSIGN expr  */
-#line 321 "parser.y"
+  case 52: /* vardec: TK_VAR TK_IDENT TK_ASSIGN expr  */
+#line 362 "parser.y"
                                        {
     stxnode_t* varnode = stxtree_create_node(TK_VAR);
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-2].sym));
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-2].sym)->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[-2].sym));
+    idnode->sc = sc;
     stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
     stxtree_append_node(assnode, idnode);
-    stxtree_append_node(assnode, (yyvsp[0].astnode));
+    stxtree_append_node(assnode, (yyvsp[0].ast));
     stxtree_append_node(varnode, assnode);
-    (yyval.astnode) = varnode;
+    (yyval.ast) = varnode;
 }
-#line 1914 "parser.tab.c"
+#line 1977 "parser.tab.c"
     break;
 
-  case 51: /* vardec: TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr  */
-#line 330 "parser.y"
+  case 53: /* vardec: TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr  */
+#line 374 "parser.y"
                                                      {
         stxnode_t* varnode = stxtree_create_node(TK_VAR);
-        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-4].sym));
+        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-4].sym)->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, (yyvsp[-4].sym));
+        idnode->sc = sc;
         stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
-        stxtree_append_node(idnode, (yyvsp[-2].astnode));
+        stxtree_append_node(idnode, (yyvsp[-2].ast));
         stxtree_append_node(assnode, idnode);
-        stxtree_append_node(assnode, (yyvsp[0].astnode));
+        stxtree_append_node(assnode, (yyvsp[0].ast));
         stxtree_append_node(varnode, assnode);
-        (yyval.astnode) = varnode;
+        (yyval.ast) = varnode;
     }
-#line 1929 "parser.tab.c"
+#line 1995 "parser.tab.c"
     break;
 
-  case 52: /* funcdec: TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr  */
-#line 342 "parser.y"
-                                                                                         {
+  case 54: /* funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr leavesc  */
+#line 389 "parser.y"
+                                                                                                         {
     stxnode_t* fnnode = stxtree_create_node(TK_FUNCTION);
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-7].sym));
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-8].sym)->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[-8].sym));
+    idnode->sc = sc;
     stxnode_t* lparen = stxtree_create_node(TK_LPAREN);
+    stxnode_t* rparen = stxtree_create_node(TK_RPAREN);
     stxnode_t* clnode = stxtree_create_node(TK_COLON);
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
-    stxtree_append_node(equnode, (yyvsp[0].astnode));
-    stxtree_append_node(clnode, (yyvsp[-2].astnode));
-    stxtree_append_node(lparen, (yyvsp[-5].astnode));
+    stxtree_append_node(clnode, (yyvsp[-3].ast));
+    stxtree_append_node(equnode, (yyvsp[-1].ast));
     stxtree_append_node(fnnode, idnode);
     stxtree_append_node(fnnode, lparen);
+    stxtree_append_node(fnnode, (yyvsp[-6].ast));
+    stxtree_append_node(fnnode, rparen);
     stxtree_append_node(fnnode, clnode);
     stxtree_append_node(fnnode, equnode);
-    (yyval.astnode) = fnnode;
+    (yyval.ast) = fnnode;
 }
-#line 1949 "parser.tab.c"
+#line 2020 "parser.tab.c"
     break;
 
-  case 53: /* funcdec: TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr  */
-#line 357 "parser.y"
-                                                                      {
+  case 55: /* funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr leavesc  */
+#line 409 "parser.y"
+                                                                                      {
         stxnode_t* fnnode = stxtree_create_node(TK_FUNCTION);
-        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-5].sym));
+        stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-6].sym)->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, (yyvsp[-6].sym));
+        idnode->sc = sc;
         stxnode_t* lparen = stxtree_create_node(TK_LPAREN);
+        stxnode_t* rparen = stxtree_create_node(TK_RPAREN);
         stxnode_t* equnode = stxtree_create_node(TK_EQU);
-        stxtree_append_node(equnode, (yyvsp[0].astnode));
-        stxtree_append_node(lparen, (yyvsp[-3].astnode));
+        stxtree_append_node(equnode, (yyvsp[-1].ast));
         stxtree_append_node(fnnode, idnode);
         stxtree_append_node(fnnode, lparen);
+        stxtree_append_node(fnnode, (yyvsp[-4].ast));
+        stxtree_append_node(fnnode, rparen);
         stxtree_append_node(fnnode, equnode);
-        (yyval.astnode) = fnnode;
+        (yyval.ast) = fnnode;
     }
-#line 1966 "parser.tab.c"
+#line 2042 "parser.tab.c"
     break;
 
-  case 54: /* typefields: typefield typefieldsfx  */
-#line 371 "parser.y"
+  case 56: /* typefields: typefield typefieldsfx  */
+#line 428 "parser.y"
                                    {
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    (yyval.astnode) = (yyvsp[-1].astnode);
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    (yyval.ast) = (yyvsp[-1].ast);
 }
-#line 1975 "parser.tab.c"
+#line 2051 "parser.tab.c"
     break;
 
-  case 55: /* typefields: %empty  */
-#line 375 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1981 "parser.tab.c"
+  case 57: /* typefields: %empty  */
+#line 432 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 2057 "parser.tab.c"
     break;
 
-  case 56: /* typefieldsfx: TK_COMMA typefield typefieldsfx  */
-#line 378 "parser.y"
+  case 58: /* typefieldsfx: TK_COMMA typefield typefieldsfx  */
+#line 435 "parser.y"
                                               {
     stxnode_t* cmnode = stxtree_create_node(TK_COMMA);
-    stxtree_append_node((yyvsp[-1].astnode), (yyvsp[0].astnode));
-    stxtree_append_node(cmnode, (yyvsp[-1].astnode));
-    (yyval.astnode) = cmnode;
+    stxtree_append_node((yyvsp[-1].ast), (yyvsp[0].ast));
+    stxtree_append_node(cmnode, (yyvsp[-1].ast));
+    (yyval.ast) = cmnode;
 }
-#line 1992 "parser.tab.c"
+#line 2068 "parser.tab.c"
     break;
 
-  case 57: /* typefieldsfx: %empty  */
-#line 384 "parser.y"
-                    { (yyval.astnode) = stxtree_create_node(YYEMPTY); }
-#line 1998 "parser.tab.c"
+  case 59: /* typefieldsfx: %empty  */
+#line 441 "parser.y"
+                    { (yyval.ast) = stxtree_create_node(YYEMPTY); }
+#line 2074 "parser.tab.c"
     break;
 
-  case 58: /* typefield: TK_IDENT TK_COLON typeid  */
-#line 387 "parser.y"
+  case 60: /* typefield: TK_IDENT TK_COLON typeid  */
+#line 444 "parser.y"
                                     {
-    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-2].sym));
+    stxnode_t* idnode = stxtree_create_ident_node((yyvsp[-2].sym)->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, (yyvsp[-2].sym));
+    idnode->sc = sc;
     stxnode_t* clnode = stxtree_create_node(TK_COLON);
-    stxtree_append_node(clnode, (yyvsp[0].astnode));
+    stxtree_append_node(clnode, (yyvsp[0].ast));
     stxtree_append_node(idnode, clnode);
-    (yyval.astnode) = idnode;
+    (yyval.ast) = idnode;
 }
-#line 2010 "parser.tab.c"
+#line 2089 "parser.tab.c"
     break;
 
-  case 59: /* binoper: TK_PLUS  */
-#line 396 "parser.y"
-                 { (yyval.astnode) = stxtree_create_node(TK_PLUS); }
-#line 2016 "parser.tab.c"
+  case 61: /* binoper: TK_PLUS  */
+#line 456 "parser.y"
+                 { (yyval.ast) = stxtree_create_node(TK_PLUS); }
+#line 2095 "parser.tab.c"
     break;
 
-  case 60: /* binoper: TK_MULTI  */
-#line 397 "parser.y"
-               { (yyval.astnode) = stxtree_create_node(TK_MULTI); }
-#line 2022 "parser.tab.c"
+  case 62: /* binoper: TK_MULTI  */
+#line 457 "parser.y"
+               { (yyval.ast) = stxtree_create_node(TK_MULTI); }
+#line 2101 "parser.tab.c"
     break;
 
-  case 61: /* binoper: TK_MINUS  */
-#line 398 "parser.y"
-               { (yyval.astnode) = stxtree_create_node(TK_MINUS); }
-#line 2028 "parser.tab.c"
+  case 63: /* binoper: TK_MINUS  */
+#line 458 "parser.y"
+               { (yyval.ast) = stxtree_create_node(TK_MINUS); }
+#line 2107 "parser.tab.c"
     break;
 
-  case 62: /* binoper: TK_DIV  */
-#line 399 "parser.y"
-             { (yyval.astnode) = stxtree_create_node(TK_DIV); }
-#line 2034 "parser.tab.c"
+  case 64: /* binoper: TK_DIV  */
+#line 459 "parser.y"
+             { (yyval.ast) = stxtree_create_node(TK_DIV); }
+#line 2113 "parser.tab.c"
     break;
 
-  case 63: /* binoper: TK_EQU  */
-#line 400 "parser.y"
-             { (yyval.astnode) = stxtree_create_node(TK_EQU); }
-#line 2040 "parser.tab.c"
+  case 65: /* binoper: TK_EQU  */
+#line 460 "parser.y"
+             { (yyval.ast) = stxtree_create_node(TK_EQU); }
+#line 2119 "parser.tab.c"
     break;
 
-  case 64: /* binoper: TK_NEQU  */
-#line 401 "parser.y"
-              { (yyval.astnode) = stxtree_create_node(TK_NEQU); }
-#line 2046 "parser.tab.c"
+  case 66: /* binoper: TK_NEQU  */
+#line 461 "parser.y"
+              { (yyval.ast) = stxtree_create_node(TK_NEQU); }
+#line 2125 "parser.tab.c"
     break;
 
-  case 65: /* binoper: TK_LT  */
-#line 402 "parser.y"
-            { (yyval.astnode) = stxtree_create_node(TK_LT); }
-#line 2052 "parser.tab.c"
+  case 67: /* binoper: TK_LT  */
+#line 462 "parser.y"
+            { (yyval.ast) = stxtree_create_node(TK_LT); }
+#line 2131 "parser.tab.c"
     break;
 
-  case 66: /* binoper: TK_GT  */
-#line 403 "parser.y"
-            { (yyval.astnode) = stxtree_create_node(TK_GT); }
-#line 2058 "parser.tab.c"
+  case 68: /* binoper: TK_GT  */
+#line 463 "parser.y"
+            { (yyval.ast) = stxtree_create_node(TK_GT); }
+#line 2137 "parser.tab.c"
     break;
 
-  case 67: /* binoper: TK_LEQU  */
-#line 404 "parser.y"
-              { (yyval.astnode) = stxtree_create_node(TK_LEQU); }
-#line 2064 "parser.tab.c"
+  case 69: /* binoper: TK_LEQU  */
+#line 464 "parser.y"
+              { (yyval.ast) = stxtree_create_node(TK_LEQU); }
+#line 2143 "parser.tab.c"
     break;
 
-  case 68: /* binoper: TK_GEQU  */
-#line 405 "parser.y"
-              { (yyval.astnode) = stxtree_create_node(TK_GEQU); }
-#line 2070 "parser.tab.c"
+  case 70: /* binoper: TK_GEQU  */
+#line 465 "parser.y"
+              { (yyval.ast) = stxtree_create_node(TK_GEQU); }
+#line 2149 "parser.tab.c"
     break;
 
-  case 69: /* binoper: TK_AND  */
-#line 406 "parser.y"
-             { (yyval.astnode) = stxtree_create_node(TK_AND); }
-#line 2076 "parser.tab.c"
+  case 71: /* binoper: TK_AND  */
+#line 466 "parser.y"
+             { (yyval.ast) = stxtree_create_node(TK_AND); }
+#line 2155 "parser.tab.c"
     break;
 
-  case 70: /* binoper: TK_OR  */
-#line 407 "parser.y"
-            { (yyval.astnode) = stxtree_create_node(TK_OR); }
-#line 2082 "parser.tab.c"
+  case 72: /* binoper: TK_OR  */
+#line 467 "parser.y"
+            { (yyval.ast) = stxtree_create_node(TK_OR); }
+#line 2161 "parser.tab.c"
     break;
 
 
-#line 2086 "parser.tab.c"
+#line 2165 "parser.tab.c"
 
       default: break;
     }
@@ -2306,5 +2385,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 410 "parser.y"
+#line 470 "parser.y"
 

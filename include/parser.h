@@ -109,12 +109,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "parser.y"
+#line 19 "parser.y"
 
-    char* sym;
     int ival;
     char* sval;
-    struct stxnode* astnode;
+    struct stxnode* ast;
+    struct symval* sym;
 
 #line 120 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
 

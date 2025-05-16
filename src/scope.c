@@ -5,6 +5,15 @@
 #include <tigerdef.h>
 
 static int _gsc_id = 1;
+static scope_t *_cur_scope = NULL;
+
+scope_t *scope_current() {
+  if (!_cur_scope) {
+    simple_msg("invalid scope");
+    exit(ERR_SCOPE);
+  }
+  return _cur_scope;
+}
 
 scope_t *scope_create() {
   scope_t *sc = (scope_t *)malloc(sizeof(scope_t));
@@ -23,7 +32,23 @@ memerr:
   exit(ERR_MEM);
 succ:
   _gsc_id++;
+
+  if (!_cur_scope) {
+    _cur_scope = sc;
+    return sc;
+  }
+
+  // chang current scope and set new scope parent
+  sc->parent = _cur_scope;
+  scope_append(_cur_scope, sc);
+  _cur_scope = sc;
   return sc;
+}
+
+void scope_close() {
+  if (!_cur_scope || !_cur_scope->parent)
+    return;
+  _cur_scope = _cur_scope->parent;
 }
 
 void scope_add_sym(scope_t *sc, symval_t *val) {

@@ -12,7 +12,9 @@ typedef struct scope {
   int children_count;
 } scope_t;
 
+scope_t *scope_current();
 scope_t *scope_create();
+void scope_close();
 void scope_add_sym(scope_t *sc, symval_t *val);
 symval_t *scope_get_sym(scope_t *sc, const char *key);
 void scope_append(scope_t *dest, scope_t *src);

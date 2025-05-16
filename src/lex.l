@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stxtree.h>
+#include <symdict.h>
 
 char tiger_str[STRING_MAX_SIZE];
 int tiger_str_leng;
@@ -117,7 +118,8 @@ int { return TK_INT; }
 & { return TK_AND; }
 '|' { return TK_OR; }
 {ident} {
-    yylval.sym = strdup(yytext);
+    char* txt = strdup(yytext);
+    yylval.sym = symdict_create_symval(yylineno, TK_IDENT, txt);
     return TK_IDENT; 
     }
 

@@ -9,7 +9,7 @@
 
 typedef struct symval {
   yytoken_kind_t type;
-  char *txt;
+  const char *txt;
   int lineno;
   struct symval *next; // used to handle collision key
 } symval_t;
@@ -20,6 +20,8 @@ typedef struct symdict {
 } symdict_t;
 
 symdict_t *symdict_create();
+symval_t *symdict_create_symval(int lineno, yytoken_kind_t token_type,
+                                const char *txt);
 void symdict_add(symdict_t *dict, const char *key, symval_t *val);
 void symdict_del(symdict_t *dict, const char *key);
 symval_t *symdict_get(symdict_t *dict, const char *key);

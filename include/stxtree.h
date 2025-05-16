@@ -2,6 +2,7 @@
 #define __STXTREE_H
 
 #include <parser.h>
+#include <scope.h>
 #include <tigerdef.h>
 
 typedef union token_val {
@@ -16,7 +17,8 @@ typedef struct stxnode {
   int count; // children node count
   int cap;   // capacity of node children list
   struct stxnode **children;
-  int deep; // tree deep is used to travel tree
+  int deep;    // tree deep is used to travel tree
+  scope_t *sc; // current scope
 } stxnode_t;
 
 typedef struct stxtree {

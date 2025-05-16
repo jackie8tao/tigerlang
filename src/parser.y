@@ -6,6 +6,8 @@
 #include <stuff.h>
 #include <lex.h>
 #include <stxtree.h>
+#include <scope.h>
+#include <symdict.h>
 
 void yyerror(const char* msg)
 {
@@ -15,10 +17,10 @@ void yyerror(const char* msg)
 %}
 
 %union {
-    char* sym;
     int ival;
     char* sval;
-    struct stxnode* astnode;
+    struct stxnode* ast;
+    struct symval* sym;
 }
 
 %token YYEOF
@@ -47,30 +49,30 @@ void yyerror(const char* msg)
 %right UMINUS
 %precedence PREFER
 
-%type <astnode> expr
-%type <astnode> exprsfx
-%type <astnode> binoper 
-%type <astnode> primaryexpr
-%type <astnode> lvalue
-%type <astnode> exprlist
-%type <astnode> exprlistsfx
-%type <astnode> exprseq
-%type <astnode> exprseqsfx
-%type <astnode> fieldlistsfx
-%type <astnode> indexlist
-%type <astnode> declist
-%type <astnode> typefields
-%type <astnode> typefieldsfx
-%type <astnode> typeid
-%type <astnode> fieldlist
-%type <astnode> typeval
-%type <astnode> typedec
-%type <astnode> dec
-%type <astnode> index
-%type <astnode> vardec
-%type <astnode> funcdec
-%type <astnode> typefield
-%type <astnode> stmt;
+%type <ast> expr
+%type <ast> exprsfx
+%type <ast> binoper 
+%type <ast> primaryexpr
+%type <ast> lvalue
+%type <ast> exprlist
+%type <ast> exprlistsfx
+%type <ast> exprseq
+%type <ast> exprseqsfx
+%type <ast> fieldlistsfx
+%type <ast> indexlist
+%type <ast> declist
+%type <ast> typefields
+%type <ast> typefieldsfx
+%type <ast> typeid
+%type <ast> fieldlist
+%type <ast> typeval
+%type <ast> typedec
+%type <ast> dec
+%type <ast> index
+%type <ast> vardec
+%type <ast> funcdec
+%type <ast> typefield
+%type <ast> stmt;
 
 
 %%
@@ -80,6 +82,9 @@ stmt: expr {
     stxtree_t* gtree = stxtree_get();
     gtree->root = $$;
 }
+
+entersc: /* epsilon */ { scope_create(); };
+leavesc: /* epsilon */ { scope_close(); };
 
 expr: primaryexpr exprsfx {
     stxtree_append_node($1, $2);
@@ -114,81 +119,100 @@ primaryexpr: TK_STRING  { $$ = stxtree_create_string_node($1); }
         $$ = assnode;
     }
     | TK_IDENT TK_LPAREN exprlist TK_RPAREN {
-        stxnode_t* idnode = stxtree_create_ident_node($1);
+        stxnode_t* idnode = stxtree_create_ident_node($1->txt);
+        scope_t* sc = scope_current();
+        idnode->sc = sc;
         stxnode_t* lparen = stxtree_create_node(TK_LPAREN);
-        stxtree_append_node(lparen, $3);
+        stxnode_t* rparen = stxtree_create_node(TK_RPAREN);
         stxtree_append_node(idnode, lparen);
+        stxtree_append_node(idnode, $3);
+        stxtree_append_node(idnode, rparen);
         $$ = idnode;
     }
     | TK_LPAREN exprseq TK_RPAREN {
-        $$ = $2;
+        $$ = $2; // 这里有点问题
     }
     | TK_IDENT TK_LBRACE fieldlist TK_RBRACE {
-        stxnode_t* idnode = stxtree_create_ident_node($1);
+        stxnode_t* idnode = stxtree_create_ident_node($1->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, $1);
+        idnode->sc = sc;
         stxnode_t* lbrace = stxtree_create_node(TK_LBRACE);
-        stxtree_append_node(lbrace, $3);
+        stxnode_t* rbrace = stxtree_create_node(TK_RBRACE);
         stxtree_append_node(idnode, lbrace);
+        stxtree_append_node(idnode, $3);
+        stxtree_append_node(idnode, rbrace);
         $$ = idnode;
     }
     | TK_IDENT TK_LBRACKET expr TK_RBRACKET TK_OF expr {
-        stxnode_t* idnode = stxtree_create_ident_node($1);
+        stxnode_t* idnode = stxtree_create_ident_node($1->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, $1);
+        idnode->sc = sc;
         stxnode_t* lbracket = stxtree_create_node(TK_LBRACKET);
-        stxtree_append_node(lbracket, $3);
+        stxnode_t* rbracket = stxtree_create_node(TK_RBRACKET);
         stxnode_t* ofnode = stxtree_create_node(TK_OF);
-        stxtree_append_node(ofnode, $6);
         stxtree_append_node(idnode, lbracket);
+        stxtree_append_node(idnode, $3);
+        stxtree_append_node(idnode, rbracket);
         stxtree_append_node(idnode, ofnode);
+        stxtree_append_node(idnode, $6);
         $$ = idnode;
     }
-    | TK_IF expr TK_THEN expr {
+    | TK_IF entersc expr TK_THEN expr leavesc {
         stxnode_t* ifnode = stxtree_create_node(TK_IF);
         stxnode_t* thnode = stxtree_create_node(TK_THEN);
-        stxtree_append_node(thnode, $4);
-        stxtree_append_node(ifnode, $2);
+        stxtree_append_node(thnode, $5);
+        stxtree_append_node(ifnode, $3);
         stxtree_append_node(ifnode, thnode);
         $$ = ifnode;
     }
-    | TK_IF expr TK_THEN expr TK_ELSE expr {
+    | TK_IF entersc expr TK_THEN expr TK_ELSE expr leavesc {
         stxnode_t* ifnode = stxtree_create_node(TK_IF);
         stxnode_t* thnode = stxtree_create_node(TK_THEN);
         stxnode_t* elnode = stxtree_create_node(TK_ELSE);
-        stxtree_append_node(elnode, $6);
-        stxtree_append_node(thnode, $4);
-        stxtree_append_node(ifnode, $2);
+        stxtree_append_node(elnode, $7);
+        stxtree_append_node(thnode, $5);
+        stxtree_append_node(ifnode, $3);
         stxtree_append_node(ifnode, thnode);
         stxtree_append_node(ifnode, elnode);
         $$ = ifnode;
     }
-    | TK_WHILE expr TK_DO expr {
+    | TK_WHILE entersc expr TK_DO expr leavesc {
         stxnode_t* whnode = stxtree_create_node(TK_WHILE);
         stxnode_t* donode = stxtree_create_node(TK_DO);
-        stxtree_append_node(donode, $4);
-        stxtree_append_node(whnode, $2);
+        stxtree_append_node(whnode, $3);
+        stxtree_append_node(donode, $5);
         stxtree_append_node(whnode, donode);
         $$ = whnode;
     }
-    | TK_FOR TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr {
+    | TK_FOR entersc TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr leavesc {
         stxnode_t* fornode = stxtree_create_node(TK_FOR);
         stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
-        stxnode_t* idnode = stxtree_create_ident_node($2);
-        stxtree_append_node(assnode, idnode);
-        stxtree_append_node(assnode, $4);
+        stxnode_t* idnode = stxtree_create_ident_node($3->txt);
+        scope_t* cur_sc = scope_current();
+        scope_add_sym(cur_sc, $3);
+        idnode->sc = scope_current();
         stxnode_t* tonode = stxtree_create_node(TK_TO);
-        stxtree_append_node(tonode, $6);
+        stxtree_append_node(tonode, $5);
+        stxtree_append_node(tonode, $7);
+        stxtree_append_node(assnode, idnode);
+        stxtree_append_node(assnode, tonode);
         stxnode_t* donode = stxtree_create_node(TK_DO);
-        stxtree_append_node(donode, $8);
+        stxtree_append_node(donode, $9);
         stxtree_append_node(fornode, assnode);
-        stxtree_append_node(fornode, tonode);
         stxtree_append_node(fornode, donode);
         $$ = fornode;
     }
     | TK_BREAK { $$ = stxtree_create_node(TK_BREAK); }
-    | TK_LET declist TK_IN exprseq TK_END {
+    | TK_LET entersc declist TK_IN exprseq TK_END leavesc {
         stxnode_t* letnode = stxtree_create_node(TK_LET);
         stxnode_t* innode = stxtree_create_node(TK_IN);
-        stxtree_append_node(letnode, $2);
+        stxnode_t* endnode = stxtree_create_node(TK_END);
+        stxtree_append_node(letnode, $3);
         stxtree_append_node(letnode, innode);
-        stxtree_append_node(letnode, $4);
+        stxtree_append_node(letnode, $5);
+        stxtree_append_node(letnode, endnode);
         $$ = letnode;
     }
     ;
@@ -229,7 +253,10 @@ exprlistsfx: TK_COMMA expr exprlistsfx {
 fieldlist: TK_IDENT TK_EQU expr fieldlistsfx {
     stxtree_append_node($3, $4);
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
-    stxnode_t* idnode = stxtree_create_ident_node($<sym>1);
+    stxnode_t* idnode = stxtree_create_ident_node($1->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $1);
+    idnode->sc = sc;
     stxtree_append_node(equnode, idnode);
     stxtree_append_node(equnode, $3);
     $$ = equnode;
@@ -238,8 +265,11 @@ fieldlist: TK_IDENT TK_EQU expr fieldlistsfx {
 
 fieldlistsfx: TK_COMMA TK_IDENT TK_EQU expr fieldlistsfx {
     stxnode_t* cmnode = stxtree_create_node(TK_COMMA);
-    stxnode_t* idnode = stxtree_create_ident_node($2);
+    stxnode_t* idnode = stxtree_create_ident_node($2->txt);
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $2);
+    idnode->sc = sc;
     stxtree_append_node($4, $5);
     stxtree_append_node(equnode, idnode);
     stxtree_append_node(equnode, $4);
@@ -250,7 +280,10 @@ fieldlistsfx: TK_COMMA TK_IDENT TK_EQU expr fieldlistsfx {
     ;
 
 lvalue: TK_IDENT indexlist {
-    stxnode_t* idnode = stxtree_create_ident_node($1);
+    stxnode_t* idnode = stxtree_create_ident_node($1->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $1);
+    idnode->sc = sc;
     stxtree_append_node(idnode, $2);
     $$ = idnode;
 }
@@ -265,7 +298,10 @@ indexlist: index indexlist {
 
 index: TK_DOT TK_IDENT {
     stxnode_t* dotnode = stxtree_create_node(TK_DOT);
-    stxnode_t* idnode = stxtree_create_ident_node($2);
+    stxnode_t* idnode = stxtree_create_ident_node($2->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $2);
+    idnode->sc = sc;
     stxtree_append_node(dotnode, idnode);
     $$ = dotnode;
 }
@@ -313,14 +349,22 @@ typeval: typeid { $$ = $1; }
     }
     ;
 
-typeid: TK_IDENT { $$ = stxtree_create_ident_node($1); }
+typeid: TK_IDENT { 
+  stxnode_t* idnode = stxtree_create_ident_node($1->txt); 
+  scope_t* sc = scope_current();
+  scope_add_sym(sc, $1);
+  idnode->sc = sc;
+}
     | TK_INT { $$ = stxtree_create_node(TK_INT); }
     | TK_STR { $$ = stxtree_create_node(TK_STR); }
     ;
 
 vardec: TK_VAR TK_IDENT TK_ASSIGN expr {
     stxnode_t* varnode = stxtree_create_node(TK_VAR);
-    stxnode_t* idnode = stxtree_create_ident_node($2);
+    stxnode_t* idnode = stxtree_create_ident_node($2->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $2);
+    idnode->sc = sc;
     stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
     stxtree_append_node(assnode, idnode);
     stxtree_append_node(assnode, $4);
@@ -329,7 +373,10 @@ vardec: TK_VAR TK_IDENT TK_ASSIGN expr {
 }
     | TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr {
         stxnode_t* varnode = stxtree_create_node(TK_VAR);
-        stxnode_t* idnode = stxtree_create_ident_node($2);
+        stxnode_t* idnode = stxtree_create_ident_node($2->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, $2);
+        idnode->sc = sc;
         stxnode_t* assnode = stxtree_create_node(TK_ASSIGN);
         stxtree_append_node(idnode, $4);
         stxtree_append_node(assnode, idnode);
@@ -339,30 +386,40 @@ vardec: TK_VAR TK_IDENT TK_ASSIGN expr {
     }
     ;
 
-funcdec: TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr {
+funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr leavesc {
     stxnode_t* fnnode = stxtree_create_node(TK_FUNCTION);
-    stxnode_t* idnode = stxtree_create_ident_node($2);
+    stxnode_t* idnode = stxtree_create_ident_node($3->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $3);
+    idnode->sc = sc;
     stxnode_t* lparen = stxtree_create_node(TK_LPAREN);
+    stxnode_t* rparen = stxtree_create_node(TK_RPAREN);
     stxnode_t* clnode = stxtree_create_node(TK_COLON);
     stxnode_t* equnode = stxtree_create_node(TK_EQU);
-    stxtree_append_node(equnode, $9);
-    stxtree_append_node(clnode, $7);
-    stxtree_append_node(lparen, $4);
+    stxtree_append_node(clnode, $8);
+    stxtree_append_node(equnode, $10);
     stxtree_append_node(fnnode, idnode);
     stxtree_append_node(fnnode, lparen);
+    stxtree_append_node(fnnode, $5);
+    stxtree_append_node(fnnode, rparen);
     stxtree_append_node(fnnode, clnode);
     stxtree_append_node(fnnode, equnode);
     $$ = fnnode;
 }
-    | TK_FUNCTION TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr {
+    | TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr leavesc {
         stxnode_t* fnnode = stxtree_create_node(TK_FUNCTION);
-        stxnode_t* idnode = stxtree_create_ident_node($2);
+        stxnode_t* idnode = stxtree_create_ident_node($3->txt);
+        scope_t* sc = scope_current();
+        scope_add_sym(sc, $3);
+        idnode->sc = sc;
         stxnode_t* lparen = stxtree_create_node(TK_LPAREN);
+        stxnode_t* rparen = stxtree_create_node(TK_RPAREN);
         stxnode_t* equnode = stxtree_create_node(TK_EQU);
-        stxtree_append_node(equnode, $7);
-        stxtree_append_node(lparen, $4);
+        stxtree_append_node(equnode, $8);
         stxtree_append_node(fnnode, idnode);
         stxtree_append_node(fnnode, lparen);
+        stxtree_append_node(fnnode, $5);
+        stxtree_append_node(fnnode, rparen);
         stxtree_append_node(fnnode, equnode);
         $$ = fnnode;
     }
@@ -385,7 +442,10 @@ typefieldsfx: TK_COMMA typefield typefieldsfx {
     ;
 
 typefield: TK_IDENT TK_COLON typeid {
-    stxnode_t* idnode = stxtree_create_ident_node($1);
+    stxnode_t* idnode = stxtree_create_ident_node($1->txt);
+    scope_t* sc = scope_current();
+    scope_add_sym(sc, $1);
+    idnode->sc = sc;
     stxnode_t* clnode = stxtree_create_node(TK_COLON);
     stxtree_append_node(clnode, $3);
     stxtree_append_node(idnode, clnode);

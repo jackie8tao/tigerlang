@@ -11,5 +11,6 @@
 #define ERR_YACC -2
 #define ERR_ARGS -3
 #define ERR_MEM -4
+#define ERR_SCOPE -5
 
 #endif
