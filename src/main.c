@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     return ERR_ARGS;
   }
 
-  // yydebug = 1;
+  yydebug = 1;
 
   FILE *fp;
   fp = fopen(argv[1], "r");
@@ -30,8 +30,6 @@ int main(int argc, char **argv) {
     errmsg("syntax parse error: %d", errcode);
     return ERR_YACC;
   }
-
-  stxtree_show_node(TK_TYPE);
 
   return SUCC;
 }

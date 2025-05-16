@@ -27,6 +27,7 @@ scope_t *scope_create() {
   sc->children_count = 0;
   sc->parent = NULL;
   sc->symdict = symdict_create();
+  goto succ;
 memerr:
   simple_msg("invalid memory");
   exit(ERR_MEM);
