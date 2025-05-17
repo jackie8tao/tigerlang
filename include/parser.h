@@ -99,8 +99,7 @@ extern int yydebug;
     TK_IDENT = 300,                /* TK_IDENT  */
     TK_INTEGER = 301,              /* TK_INTEGER  */
     TK_STRING = 302,               /* TK_STRING  */
-    UMINUS = 303,                  /* UMINUS  */
-    PREFER = 304                   /* PREFER  */
+    UMINUS = 303                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -109,14 +108,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "parser.y"
+#line 23 "parser.y"
 
     int ival;
     char* sval;
     struct stxnode* ast;
     struct symval* sym;
 
-#line 120 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
+#line 119 "/Users/taodingfei/Dev/tigerlang/include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -124,9 +123,23 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+/* Location type.  */
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE YYLTYPE;
+struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+};
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
 
 extern YYSTYPE yylval;
-
+extern YYLTYPE yylloc;
 
 int yyparse (void);
 
