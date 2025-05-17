@@ -112,7 +112,7 @@ union YYSTYPE
 
     int ival;
     char* sval;
-    struct stxnode* ast;
+    struct ast_node* ast;
     struct symval* sym;
 
 #line 119 "/Users/taodingfei/Dev/tigerlang/include/parser.h"

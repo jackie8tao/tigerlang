@@ -23,8 +23,6 @@ int main(int argc, char **argv) {
   }
   yyin = fp;
 
-  stxtree_init();
-
   int errcode;
   if ((errcode = yyparse()) > 0) {
     errmsg("syntax parse error: %d", errcode);
