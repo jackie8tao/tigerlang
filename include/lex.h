@@ -2,7 +2,7 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 5 "/Users/taodingfei/Dev/tigerlang/include/lex.h"
+#line 5 "/Users/taodingfei/dev/tigerlang/include/lex.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -468,6 +468,6 @@ extern int yylex (void);
 #line 126 "lex.l"
 
 
-#line 471 "/Users/taodingfei/Dev/tigerlang/include/lex.h"
+#line 471 "/Users/taodingfei/dev/tigerlang/include/lex.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

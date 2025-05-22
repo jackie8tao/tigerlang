@@ -166,15 +166,13 @@ lvalue: TK_IDENT index {
 index: TK_DOT TK_IDENT index {
       ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current());
       ast_node_t* ident_index = ast_create_ident_index(ident);
-      ast_node_t* index = ast_create_index(ident_index);
-      ast_append_index(index, $3);
-      $$ = index;
+      ast_append_index(ident_index, $3);
+      $$ = ident_index;
     }
   | TK_LBRACKET expr TK_RBRACKET index {
       ast_node_t* arr_index = ast_create_arr_index($2);
-      ast_node_t* index = ast_create_index(arr_index);
-      ast_append_index(index, $4);
-      $$ = index;
+      ast_append_index(arr_index, $4);
+      $$ = arr_index;
   }
   | /* epsilon */ { $$ = NULL; }
   ;
@@ -219,12 +217,14 @@ funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON ty
     ;
 
 typefields: TK_IDENT TK_COLON typeid { 
-    ast_node_t* typefields = ast_create_typefields();
-    ast_append_typefields(typefields, $1);
+    ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current());
+    ast_node_t* typefields = ast_create_typefields(ident, $3);
     $$ = typefields;
   }
   | typefields TK_COMMA TK_IDENT TK_COLON typeid {
-    ast_append_typefields($1, $3);
+    ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current());
+    ast_node_t* typefields = ast_create_typefields(ident, $5);
+    ast_append_typefields($1, typefields);
     $$ = $1;
   }
   | /* epsilon */ { $$ = NULL; }

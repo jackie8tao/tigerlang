@@ -116,7 +116,7 @@ void symdict_dump(symdict_t *dict) {
 }
 
 symval_t *symdict_create_symval(int lineno, yytoken_kind_t token_type,
-                                const char *txt) {
+                                char *txt) {
   symval_t *sym = (symval_t *)malloc(sizeof(symval_t));
   if (!sym) {
     simple_msg("invalid memory");

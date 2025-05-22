@@ -73,25 +73,25 @@ typedef union {
     struct ast_node *initval;
   } arraydef;
   struct {
-    ast_node_t *typeid;
-    ast_node_t *typeval;
+    struct ast_node *typeid;
+    struct ast_node *typeval;
   } typedec;
   struct {
 
   } typeval;
   struct {
-    ast_node_t *ident;
-    ast_node_t *typeid;
-    ast_node_t *next;
+    struct ast_node *ident;
+    struct ast_node *typeid;
+    struct ast_node *next;
   } typefields;
   struct {
-    ast_node_t *ident;
+    struct ast_node *ident;
   } typeid;
   struct {
-    ast_node_t *ident;
-    ast_node_t *typeid;
-    ast_node_t *expr;
-  } vardec
+    struct ast_node *ident;
+    struct ast_node *typeid;
+    struct ast_node *expr;
+  } vardec;
 } ast_declist;
 
 typedef union {
@@ -179,7 +179,7 @@ ast_node_t *ast_create_struct(ast_node_t *name, ast_node_t *fields);
 ast_node_t *ast_create_fncall(ast_node_t *fnname, ast_node_t *params);
 ast_node_t *ast_create_nil();
 ast_node_t *ast_create_int(int ival);
-ast_node_t *ast_create_string(const char *str);
+ast_node_t *ast_create_string(char *str);
 ast_node_t *ast_create_binory(yytoken_kind_t op, ast_node_t *left,
                               ast_node_t *right);
 ast_node_t *ast_create_assign(ast_node_t *var, ast_node_t *expr);
@@ -195,12 +195,11 @@ ast_node_t *ast_create_fieldlist();
 void ast_append_fieldlist(ast_node_t *cur, ast_node_t *src);
 ast_node_t *ast_create_ident_index(ast_node_t *ident);
 ast_node_t *ast_create_arr_index(ast_node_t *ival);
-ast_node_t *ast_create_index(ast_node_t *val);
 void ast_append_index(ast_node_t *cur, ast_node_t *next);
 ast_node_t *ast_create_lvalue(ast_node_t *ident, ast_node_t *index);
 ast_node_t *ast_create_typeid(yytoken_kind_t type, ast_node_t *ident);
 ast_node_t *ast_create_typefield(ast_node_t *ident, ast_node_t *typeid);
-ast_node_t *ast_create_typefields();
+ast_node_t *ast_create_typefields(ast_node_t *ident, ast_node_t *typeid);
 void ast_append_typefields(ast_node_t *cur, ast_node_t *src);
 ast_node_t *ast_create_vardec(ast_node_t *ident, ast_node_t *typeid,
                               ast_node_t *expr);
