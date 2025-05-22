@@ -9,7 +9,7 @@
 
 typedef struct symval {
   yytoken_kind_t type;
-  const char *txt;
+  char *txt;
   int lineno;
   struct symval *next; // used to handle collision key
 } symval_t;
