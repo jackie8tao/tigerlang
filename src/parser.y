@@ -50,7 +50,6 @@ void yyerror(const char* msg)
 %type <ast> declist
 %type <ast> typefields
 %type <ast> typeid
-%type <ast> typeinfo
 %type <ast> typedec
 %type <ast> dec
 %type <ast> vardec
@@ -177,8 +176,15 @@ index: TK_DOT TK_IDENT index {
   | /* epsilon */ { $$ = NULL; }
   ;
 
-declist: dec {}
-  | declist dec {}
+declist: dec {
+    ast_node_t* declist = ast_create_declist();
+    ast_append_declist(declist, $1);
+    $$ = declist;
+  }
+  | declist dec {
+    ast_append_declist($1, $2);
+    $$ = declist;
+  }
   ;
 
 dec: typedec { $$ = $1; }
@@ -186,20 +192,29 @@ dec: typedec { $$ = $1; }
     | funcdec { $$ = $1; }
     ;
 
-typedec: TK_TYPE TK_IDENT TK_EQU typeinfo {}
-    ;
-
-typeinfo: typeid { $$ = $1; }
-    | TK_LBRACE typefields TK_RBRACE {}
-    | TK_ARRAY TK_OF typeid {}
+typedec: TK_TYPE TK_IDENT TK_EQU typeid {
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current());
+      ast_node_t* typedec = ast_create_typedec(AstIdentTypeDec, ident, $4);
+      $$ = typedec;
+    } 
+    | TK_TYPE TK_IDENT TK_EQU TK_LBRACE typefields TK_RBRACE {
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current());
+      ast_node_t* typedec = ast_create_typedec(AstStTypeDec, ident, $5);
+      $$ = typedec;
+    } 
+    | TK_TYPE TK_IDENT TK_EQU TK_ARRAY TK_OF typeid {
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current());
+      ast_node_t* typedec = ast_create_typedec(AstArrTypeDec, ident, $6);
+      $$ = typedec;
+    }
     ;
 
 typeid: TK_IDENT { 
       ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current());
-      $$ = ast_create_typeid(TK_IDENT, ident); 
+      $$ = ast_create_ident_typeid(ident); 
     }
-    | TK_INT { $$ = ast_create_typeid(TK_INT, NULL); }
-    | TK_STR { $$ = ast_create_typeid(TK_STR, NULL); }
+    | TK_INT { $$ = ast_create_int_typeid(); }
+    | TK_STR { $$ = ast_create_str_typeid(); }
     ;
 
 vardec: TK_VAR TK_IDENT TK_ASSIGN expr {

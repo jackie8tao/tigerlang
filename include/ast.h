@@ -23,18 +23,20 @@ typedef enum {
   AstFncall,
   AstFieldef,
   AstFieldList,
-  AstIndex,
   AstIdentIndex,
   AstArrIndex,
   AstLvalue,
-  AstTypeDec,
-  AstTypeId,
-  AstTypeField,
+  AstIdentTypeDec,
+  AstStTypeDec,
+  AstArrTypeDec,
+  AstIdentTypeId,
+  AstStrTypeId,
+  AstIntTypeId,
   AstTypeFields,
   AstVarDec,
   AstTypeArr,
   AstTypeSt,
-  AstTypeInfo,
+  AstDecList,
 } ast_type;
 
 struct ast_node;
@@ -77,9 +79,6 @@ typedef union {
     struct ast_node *typeval;
   } typedec;
   struct {
-
-  } typeval;
-  struct {
     struct ast_node *ident;
     struct ast_node *typeid;
     struct ast_node *next;
@@ -92,6 +91,11 @@ typedef union {
     struct ast_node *typeid;
     struct ast_node *expr;
   } vardec;
+  struct {
+    int count;
+    int cap;
+    struct ast_node **children;
+  } declist;
 } ast_declist;
 
 typedef union {
@@ -197,11 +201,15 @@ ast_node_t *ast_create_ident_index(ast_node_t *ident);
 ast_node_t *ast_create_arr_index(ast_node_t *ival);
 void ast_append_index(ast_node_t *cur, ast_node_t *next);
 ast_node_t *ast_create_lvalue(ast_node_t *ident, ast_node_t *index);
-ast_node_t *ast_create_typeid(yytoken_kind_t type, ast_node_t *ident);
-ast_node_t *ast_create_typefield(ast_node_t *ident, ast_node_t *typeid);
+ast_node_t *ast_create_ident_typeid(ast_node_t *ident);
+ast_node_t *ast_create_int_typeid();
+ast_node_t *ast_create_str_typeid();
 ast_node_t *ast_create_typefields(ast_node_t *ident, ast_node_t *typeid);
 void ast_append_typefields(ast_node_t *cur, ast_node_t *src);
 ast_node_t *ast_create_vardec(ast_node_t *ident, ast_node_t *typeid,
                               ast_node_t *expr);
-
+ast_node_t *ast_create_typedec(ast_type type, ast_node_t *ident,
+                               ast_node_t *typeval);
+ast_node_t *ast_create_declist();
+ast_node_t *ast_append_declist(ast_node_t *cur, ast_node_t *src);
 #endif
