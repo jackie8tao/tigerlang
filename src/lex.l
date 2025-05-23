@@ -124,7 +124,7 @@ int { yycolno += yyleng; return TK_INT; }
 '|' { yycolno += yyleng; return TK_OR; }
 [[:alpha:]]+([[:alpha:]]|[[:digit:]]|_)* {
     char* txt = strdup(yytext);
-    yylval.sym = symdict_create_symval(yylineno, TK_IDENT, txt);
+    yylval.sym = symdict_create_tokeninfo(yylineno, yycolno, txt);
     yycolno += yyleng; 
     return TK_IDENT; 
     }

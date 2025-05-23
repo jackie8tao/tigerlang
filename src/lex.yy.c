@@ -1184,7 +1184,7 @@ YY_RULE_SETUP
 #line 125 "lex.l"
 {
     char* txt = strdup(yytext);
-    yylval.sym = symdict_create_symval(yylineno, TK_IDENT, txt);
+    yylval.sym = symdict_create_tokeninfo(yylineno, yycolno, txt);
     yycolno += yyleng; 
     return TK_IDENT; 
     }

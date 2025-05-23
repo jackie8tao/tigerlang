@@ -110,7 +110,7 @@ void symdict_dump(symdict_t *dict) {
   for (int i = 0; i < MAX_SYMDICT_SIZE; i++) {
     cur = dict->data[i];
     while (!cur) {
-      printf("line: %d, type: %d, name: %s\n", cur->lineno, cur->type,
+      printf("line: %d, col: %d, name: %s\n", cur->lineno, cur->clumon,
              cur->name);
       cur = cur->next;
     }
@@ -127,4 +127,13 @@ symval_t *symdict_create_symval(int lineno, int column, char *name) {
   sym->clumon = column;
   sym->lineno = lineno;
   return sym;
+}
+
+struct tokeninfo *symdict_create_tokeninfo(int lineno, int colno, char *txt) {
+  struct tokeninfo *tokeninfo =
+      (struct tokeninfo *)malloc(sizeof(struct tokeninfo));
+  tokeninfo->lineno = lineno;
+  tokeninfo->colno = colno;
+  tokeninfo->txt = txt;
+  return tokeninfo;
 }

@@ -106,13 +106,13 @@ ast_node_t *ast_create_ident(char *name, scope_t *sc, int lineno, int colno) {
   return node;
 }
 
-ast_node_t *ast_create_arraydef(ast_node_t *type, ast_node_t *size,
-                                ast_node_t *initval) {
+ast_node_t *ast_create_arrinit(ast_node_t *type, ast_node_t *size,
+                               ast_node_t *initval) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
-  node->type = AstArrDef;
-  node->declist.arrdef.type = type;
-  node->declist.arrdef.size = size;
-  node->declist.arrdef.initval = initval;
+  node->type = AstArrInit;
+  node->declist.arrinit.type = type;
+  node->declist.arrinit.size = size;
+  node->declist.arrinit.initval = initval;
   return node;
 }
 

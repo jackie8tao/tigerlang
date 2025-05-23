@@ -24,7 +24,7 @@ void yyerror(const char* msg)
     int ival;
     char* sval;
     struct ast_node* ast;
-    struct symval* sym;
+    struct tokeninfo* sym;
 }
 
 %token YYEOF
@@ -91,23 +91,23 @@ expr: TK_STRING { $$ = ast_create_string($1); }
     | TK_MINUS expr %prec UMINUS { $$ = ast_create_unary(TK_MINUS, $2); }
     | lvalue TK_ASSIGN expr { $$ = ast_create_assign($1, $3); }
     | TK_IDENT TK_LPAREN exprlist TK_RPAREN { 
-        ast_node_t* ident = ast_create_ident($1->txt, scope_current(), yylloc.first_linem yylloc.first_column);
+        ast_node_t* ident = ast_create_ident($1->txt, scope_current(), yylloc.first_line, yylloc.first_column);
         $$ = ast_create_fncall(ident, $3); 
       }
     | TK_LPAREN exprseq TK_RPAREN { $$ = $2; }
     | TK_IDENT TK_LBRACE fieldlist TK_RBRACE { 
-        ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+        ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_line, yylloc.first_column);
         $$ = ast_create_struct(ident, $3); 
       }
     | TK_IDENT TK_LBRACKET expr TK_RBRACKET TK_OF expr { 
-        ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_linem yylloc.first_column);
-        $$ = ast_create_arraydef(ident, $3, $6); 
+        ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_line, yylloc.first_column);
+        $$ = ast_create_arrinit(ident, $3, $6); 
       }
     | TK_IF entersc expr TK_THEN expr leavesc { $$ = ast_create_if($3, $5, NULL); }
     | TK_IF entersc expr TK_THEN expr TK_ELSE expr leavesc { $$ = ast_create_if($3, $5, $7); }
     | TK_WHILE entersc expr TK_DO expr leavesc { $$ = ast_create_while($3, $5); }
     | TK_FOR entersc TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr leavesc { 
-        ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+        ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_line, yylloc.first_column);
         $$ = ast_create_for(ident, $5, $7, $9); 
       }
     | TK_BREAK { $$ = ast_create_break(); }
@@ -153,13 +153,13 @@ fieldlist: TK_IDENT TK_EQU expr {
   ;
 
 lvalue: TK_IDENT index {
-    ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+    ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     $$ = ast_create_lvalue(ident, $2);
   } 
   ;
 
 index: TK_DOT TK_IDENT index {
-      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* ident_index = ast_create_ident_index(ident);
       ast_append_index(ident_index, $3);
       $$ = ident_index;
@@ -189,24 +189,24 @@ dec: typedec { $$ = $1; }
     ;
 
 typedec: TK_TYPE TK_IDENT TK_EQU typeid {
-      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstIdentTypeDec, ident, $4);
       $$ = typedec;
     } 
     | TK_TYPE TK_IDENT TK_EQU TK_LBRACE typefields TK_RBRACE {
-      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstStTypeDec, ident, $5);
       $$ = typedec;
     } 
     | TK_TYPE TK_IDENT TK_EQU TK_ARRAY TK_OF typeid {
-      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstArrTypeDec, ident, $6);
       $$ = typedec;
     }
     ;
 
 typeid: TK_IDENT { 
-      ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       $$ = ast_create_ident_typeid(ident); 
     }
     | TK_INT { $$ = ast_create_int_typeid(); }
@@ -214,34 +214,34 @@ typeid: TK_IDENT {
     ;
 
 vardec: TK_VAR TK_IDENT TK_ASSIGN expr {
-      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       $$ = ast_create_vardec(ident, NULL, $4);
     }
     | TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr {
-      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($2->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       $$ = ast_create_vardec(ident, $4, $6);
     }
     ;
 
 funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr leavesc {
-      ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* fn = ast_create_fndef(ident, $5, $8, $10);
       $$ = fn;
     }
     | TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr leavesc {
-      ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+      ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* fn = ast_create_fndef(ident, $5, NULL, $8);
       $$ = fn;
     }
     ;
 
 typefields: TK_IDENT TK_COLON typeid { 
-    ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+    ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     ast_node_t* typefields = ast_create_typefields(ident, $3);
     $$ = typefields;
   }
   | typefields TK_COMMA TK_IDENT TK_COLON typeid {
-    ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_linem yylloc.first_column);
+    ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     ast_node_t* typefields = ast_create_typefields(ident, $5);
     ast_append_typefields($1, typefields);
     $$ = $1;

@@ -13,7 +13,7 @@ typedef enum {
   AstUnary,
   AstInt,
   AstNil,
-  AstArrDef,
+  AstArrInit,
   AstIf,
   AstWhile,
   AstFor,
@@ -83,7 +83,7 @@ typedef union {
     struct ast_node *type;
     struct ast_node *size;
     struct ast_node *initval;
-  } arrdef;
+  } arrinit;
   struct {
     struct ast_node *typeid;
     struct ast_node *typeval;
@@ -182,8 +182,8 @@ typedef struct ast_node {
 
 ast_node_t *ast_create_if(ast_node_t *cond, ast_node_t *then_expr,
                           ast_node_t *else_expr);
-ast_node_t *ast_create_arraydef(ast_node_t *type, ast_node_t *size,
-                                ast_node_t *initval);
+ast_node_t *ast_create_arrinit(ast_node_t *type, ast_node_t *size,
+                               ast_node_t *initval);
 ast_node_t *ast_create_exprseq();
 void ast_append_exprseq(ast_node_t *cur, ast_node_t *src);
 ast_node_t *ast_create_ident(char *name, scope_t *sc, int lineno, int colno);

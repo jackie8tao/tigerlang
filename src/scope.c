@@ -53,7 +53,7 @@ void scope_close() {
 }
 
 void scope_add_sym(scope_t *sc, symval_t *val) {
-  symdict_add(sc->symdict, val->txt, val);
+  symdict_add(sc->symdict, val->name, val);
 }
 
 symval_t *scope_get_sym(scope_t *sc, const char *key) {
