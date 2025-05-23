@@ -1,8 +1,8 @@
+#include <ast.h>
 #include <lex.h>
 #include <parser.h>
 #include <stdio.h>
 #include <stuff.h>
-#include <stxtree.h>
 #include <symdict.h>
 #include <tigerdef.h>
 
@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     return ERR_ARGS;
   }
 
-  yydebug = 1;
+  // yydebug = 1;
 
   FILE *fp;
   fp = fopen(argv[1], "r");
@@ -28,6 +28,8 @@ int main(int argc, char **argv) {
     errmsg("syntax parse error: %d", errcode);
     return ERR_YACC;
   }
+
+  ast_show_node(ast_get_root());
 
   return SUCC;
 }

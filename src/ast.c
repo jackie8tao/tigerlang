@@ -1,5 +1,7 @@
 #include <ast.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stuff.h>
 #include <tigerdef.h>
 
@@ -31,6 +33,8 @@
   }                                                                            \
   cur->grp_name.field_name.children[cur->grp_name.field_name.count] = src;     \
   cur->grp_name.field_name.count++;
+
+ast_node_t *ast_root = NULL;
 
 ast_node_t *ast_create_string(char *str) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
@@ -319,3 +323,241 @@ ast_node_t *ast_create_break() {
   node->type = AstBreak;
   return node;
 }
+
+static const char *ast_binop_str(yytoken_kind_t type) {
+  const char *str;
+  switch (type) {
+  case TK_PLUS:
+    str = "+";
+    break;
+  case TK_MINUS:
+    str = "-";
+    break;
+  case TK_MULTI:
+    str = "*";
+    break;
+  case TK_DIV:
+    str = "/";
+    break;
+  case TK_GT:
+    str = ">";
+    break;
+  case TK_GEQU:
+    str = ">=";
+    break;
+  case TK_LT:
+    str = "<";
+    break;
+  case TK_LEQU:
+    str = "<=";
+    break;
+  case TK_AND:
+    str = "&";
+    break;
+  case TK_OR:
+    str = "|";
+    break;
+  case TK_EQU:
+    str = "=";
+    break;
+  case TK_NEQU:
+    str = "!=";
+    break;
+  default:
+    str = "";
+    break;
+  }
+  return str;
+}
+
+static void ast_print_newline() { printf("\n"); }
+
+static char dumpbuf[128];
+
+static char *ast_print_prefix(char *prefix) {
+  memset(dumpbuf, '\0', 128);
+  if (strlen(prefix) <= 0) {
+    sprintf(dumpbuf, "|");
+    return strdup(dumpbuf);
+  }
+  sprintf(dumpbuf, "%s   |", prefix);
+  printf("%s---", dumpbuf);
+  return strdup(dumpbuf);
+}
+
+static void ast_dump_node(ast_node_t *node, char *prefix) {
+  if (!node) {
+    return;
+  }
+  ast_print_newline();
+  prefix = ast_print_prefix(prefix);
+  switch (node->type) {
+  case AstLet:
+    printf("[let]");
+    ast_dump_node(node->ctrlstmt.letexpr.declist, prefix);
+    ast_dump_node(node->ctrlstmt.letexpr.exprseq, prefix);
+    break;
+  case AstDecList:
+    printf("[declist]");
+    for (int i = 0; i < node->declist.declist.count; i++) {
+      ast_dump_node(node->declist.declist.children[i], prefix);
+    }
+    break;
+  case AstString:
+    printf("[string:%s]", node->valstmt.rvalue.sval);
+    break;
+  case AstIdent:
+    printf("[ident]");
+    break;
+  case AstStruct:
+    printf("[struct]");
+    ast_dump_node(node->declist.strt.fields, prefix);
+    break;
+  case AstBinory:
+    printf("[binoper:%s]", ast_binop_str(node->opstmt.binexpr.op));
+    ast_dump_node(node->opstmt.binexpr.left, prefix);
+    ast_dump_node(node->opstmt.binexpr.right, prefix);
+    break;
+  case AstAssign:
+    printf("[assign]");
+    ast_dump_node(node->opstmt.assexpr.var, prefix);
+    ast_dump_node(node->opstmt.assexpr.expr, prefix);
+    break;
+  case AstUnary:
+    printf("[unary:%d]", node->opstmt.unexpr.op);
+    ast_dump_node(node->opstmt.unexpr.val, prefix);
+    break;
+  case AstInt:
+    printf("[type:int]");
+    break;
+  case AstNil:
+    printf("[type:nil]");
+    break;
+  case AstArrInit:
+    printf("[arrinit]");
+    ast_dump_node(node->declist.arrinit.type, prefix);
+    ast_dump_node(node->declist.arrinit.size, prefix);
+    ast_dump_node(node->declist.arrinit.initval, prefix);
+    break;
+  case AstIf:
+    printf("[if]");
+    ast_dump_node(node->ctrlstmt.ifexpr.cond, prefix);
+    ast_dump_node(node->ctrlstmt.ifexpr.thexpr, prefix);
+    ast_dump_node(node->ctrlstmt.ifexpr.elexpr, prefix);
+    break;
+  case AstWhile:
+    printf("[while]");
+    ast_dump_node(node->ctrlstmt.whexpr.cond, prefix);
+    ast_dump_node(node->ctrlstmt.whexpr.do_expr, prefix);
+    break;
+  case AstFor:
+    printf("[for]");
+    ast_dump_node(node->ctrlstmt.forexpr.itor, prefix);
+    ast_dump_node(node->ctrlstmt.forexpr.start, prefix);
+    ast_dump_node(node->ctrlstmt.forexpr.end, prefix);
+    ast_dump_node(node->ctrlstmt.forexpr.expr, prefix);
+    break;
+  case AstExprList:
+    printf("[exprlist]");
+    for (int i = 0; i < node->grpstmt.exprlist.count; i++) {
+      ast_dump_node(node->grpstmt.exprlist.children[i], prefix);
+    }
+    break;
+  case AstExprSeq:
+    printf("[exprseq]");
+    for (int i = 0; i < node->grpstmt.exprseq.count; i++) {
+      ast_dump_node(node->grpstmt.exprseq.children[i], prefix);
+    }
+    break;
+  case AstFncall:
+    printf("[fncall]");
+    ast_dump_node(node->ctrlstmt.fncall.fnname, prefix);
+    ast_dump_node(node->ctrlstmt.fncall.params, prefix);
+    break;
+  case AstFieldef:
+    printf("[fieldef]");
+    // ast_dump_node(node->, prefix);
+    // ast_dump_node(node->ctrlstmt.fncall.params, prefix);
+    break;
+  case AstFieldList:
+    printf("[fieldlist]");
+    // ast_dump_node(node->declist.)
+    break;
+  case AstIdentIndex:
+    printf("[ident_index]");
+    ast_dump_node(node->valstmt.idxexpr.ident_index, prefix);
+    if (node->valstmt.idxexpr.next) {
+      ast_dump_node(node->valstmt.idxexpr.next, prefix);
+    }
+    break;
+  case AstArrIndex:
+    printf("[arr_index]");
+    ast_dump_node(node->valstmt.idxexpr.arr_index, prefix);
+    if (node->valstmt.idxexpr.next) {
+      ast_dump_node(node->valstmt.idxexpr.next, prefix);
+    }
+    break;
+  case AstLvalue:
+    printf("[lvalue]");
+    ast_dump_node(node->valstmt.lvalue.ident, prefix);
+    ast_dump_node(node->valstmt.lvalue.index, prefix);
+    break;
+  case AstIdentTypeDec:
+    printf("[ident_type_dec]");
+    ast_dump_node(node->declist.typedec.typeid, prefix);
+    ast_dump_node(node->declist.typedec.typeval, prefix);
+    break;
+  case AstStTypeDec:
+    printf("[st_type_dec]");
+    ast_dump_node(node->declist.typedec.typeid, prefix);
+    ast_dump_node(node->declist.typedec.typeval, prefix);
+    break;
+  case AstArrTypeDec:
+    printf("[arr_type_dec]");
+    ast_dump_node(node->declist.typedec.typeid, prefix);
+    ast_dump_node(node->declist.typedec.typeval, prefix);
+    break;
+  case AstIdentTypeId:
+    printf("[ident_typeid]");
+    ast_dump_node(node->declist.typeid.ident, prefix);
+    break;
+  case AstStrTypeId:
+    printf("[str_typeid]");
+    break;
+  case AstIntTypeId:
+    printf("[int_typeid]");
+    break;
+  case AstTypeFields:
+    printf("[type_fields]");
+    ast_dump_node(node->declist.typefields.ident, prefix);
+    ast_dump_node(node->declist.typefields.typeid, prefix);
+    if (node->declist.typefields.next) {
+      ast_dump_node(node->declist.typefields.next, prefix);
+    }
+    break;
+  case AstVarDec:
+    printf("[vardec]");
+    ast_dump_node(node->declist.vardec.ident, prefix);
+    ast_dump_node(node->declist.vardec.typeid, prefix);
+    ast_dump_node(node->declist.vardec.expr, prefix);
+    break;
+  case AstFnDef:
+    printf("[fndef]");
+    ast_dump_node(node->declist.fndef.fnname, prefix);
+    ast_dump_node(node->declist.fndef.params, prefix);
+    ast_dump_node(node->declist.fndef.rettype, prefix);
+    ast_dump_node(node->declist.fndef.fnbody, prefix);
+    break;
+  case AstBreak:
+    printf("[break]");
+    break;
+  default:
+    break;
+  }
+}
+
+void ast_show_node(ast_node_t *node) { ast_dump_node(node, ""); }
+
+ast_node_t *ast_get_root() { return ast_root; }
+
+void ast_set_root(ast_node_t *root) { ast_root = root; }

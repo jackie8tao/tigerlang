@@ -67,6 +67,7 @@ void yyerror(const char* msg)
 
 stmt: expr {
     $$ = $1;
+    ast_set_root($$);
 }
 
 entersc: /* epsilon */ { scope_create(); };

@@ -572,13 +572,13 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    68,    68,    72,    73,    75,    76,    77,    78,    79,
-      80,    81,    82,    83,    84,    85,    86,    87,    88,    89,
-      90,    91,    92,    93,    97,    98,   102,   106,   107,   108,
-     109,   113,   114,   117,   122,   126,   129,   134,   138,   141,
-     147,   152,   155,   161,   167,   172,   175,   180,   186,   187,
-     188,   191,   196,   201,   208,   212,   213,   216,   220,   226,
-     231,   238,   243,   249
+       0,    68,    68,    73,    74,    76,    77,    78,    79,    80,
+      81,    82,    83,    84,    85,    86,    87,    88,    89,    90,
+      91,    92,    93,    94,    98,    99,   103,   107,   108,   109,
+     110,   114,   115,   118,   123,   127,   130,   135,   139,   142,
+     148,   153,   156,   162,   168,   173,   176,   181,   187,   188,
+     189,   192,   197,   202,   209,   213,   214,   217,   221,   227,
+     232,   239,   244,   250
 };
 #endif
 
@@ -1592,470 +1592,471 @@ yyreduce:
 #line 68 "parser.y"
            {
     (yyval.ast) = (yyvsp[0].ast);
+    ast_set_root((yyval.ast));
 }
-#line 1597 "parser.tab.c"
+#line 1598 "parser.tab.c"
     break;
 
   case 3: /* entersc: %empty  */
-#line 72 "parser.y"
+#line 73 "parser.y"
                        { scope_create(); }
-#line 1603 "parser.tab.c"
+#line 1604 "parser.tab.c"
     break;
 
   case 4: /* leavesc: %empty  */
-#line 73 "parser.y"
+#line 74 "parser.y"
                        { scope_close(); }
-#line 1609 "parser.tab.c"
+#line 1610 "parser.tab.c"
     break;
 
   case 5: /* expr: TK_STRING  */
-#line 75 "parser.y"
+#line 76 "parser.y"
                 { (yyval.ast) = ast_create_string((yyvsp[0].sval)); }
-#line 1615 "parser.tab.c"
+#line 1616 "parser.tab.c"
     break;
 
   case 6: /* expr: TK_INTEGER  */
-#line 76 "parser.y"
+#line 77 "parser.y"
                  { (yyval.ast) = ast_create_int((yyvsp[0].ival)); }
-#line 1621 "parser.tab.c"
+#line 1622 "parser.tab.c"
     break;
 
   case 7: /* expr: TK_NIL  */
-#line 77 "parser.y"
+#line 78 "parser.y"
              { (yyval.ast) = ast_create_nil(); }
-#line 1627 "parser.tab.c"
+#line 1628 "parser.tab.c"
     break;
 
   case 8: /* expr: expr TK_PLUS expr  */
-#line 78 "parser.y"
+#line 79 "parser.y"
                         { (yyval.ast) = ast_create_binory(TK_PLUS, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1633 "parser.tab.c"
+#line 1634 "parser.tab.c"
     break;
 
   case 9: /* expr: expr TK_MINUS expr  */
-#line 79 "parser.y"
+#line 80 "parser.y"
                          { (yyval.ast) = ast_create_binory(TK_MINUS, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1639 "parser.tab.c"
+#line 1640 "parser.tab.c"
     break;
 
   case 10: /* expr: expr TK_MULTI expr  */
-#line 80 "parser.y"
+#line 81 "parser.y"
                          { (yyval.ast) = ast_create_binory(TK_MULTI, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1645 "parser.tab.c"
+#line 1646 "parser.tab.c"
     break;
 
   case 11: /* expr: expr TK_DIV expr  */
-#line 81 "parser.y"
+#line 82 "parser.y"
                        { (yyval.ast) = ast_create_binory(TK_DIV, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1651 "parser.tab.c"
+#line 1652 "parser.tab.c"
     break;
 
   case 12: /* expr: expr TK_EQU expr  */
-#line 82 "parser.y"
+#line 83 "parser.y"
                        { (yyval.ast) = ast_create_binory(TK_EQU, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1657 "parser.tab.c"
+#line 1658 "parser.tab.c"
     break;
 
   case 13: /* expr: expr TK_NEQU expr  */
-#line 83 "parser.y"
+#line 84 "parser.y"
                         { (yyval.ast) = ast_create_binory(TK_NEQU, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1663 "parser.tab.c"
+#line 1664 "parser.tab.c"
     break;
 
   case 14: /* expr: expr TK_GT expr  */
-#line 84 "parser.y"
+#line 85 "parser.y"
                       { (yyval.ast) = ast_create_binory(TK_GT, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1669 "parser.tab.c"
+#line 1670 "parser.tab.c"
     break;
 
   case 15: /* expr: expr TK_GEQU expr  */
-#line 85 "parser.y"
+#line 86 "parser.y"
                         { (yyval.ast) = ast_create_binory(TK_GEQU, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1675 "parser.tab.c"
+#line 1676 "parser.tab.c"
     break;
 
   case 16: /* expr: expr TK_LEQU expr  */
-#line 86 "parser.y"
+#line 87 "parser.y"
                         { (yyval.ast) = ast_create_binory(TK_LEQU, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1681 "parser.tab.c"
+#line 1682 "parser.tab.c"
     break;
 
   case 17: /* expr: expr TK_LT expr  */
-#line 87 "parser.y"
+#line 88 "parser.y"
                       { (yyval.ast) = ast_create_binory(TK_LT, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1687 "parser.tab.c"
+#line 1688 "parser.tab.c"
     break;
 
   case 18: /* expr: expr TK_AND expr  */
-#line 88 "parser.y"
+#line 89 "parser.y"
                        { (yyval.ast) = ast_create_binory(TK_AND, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1693 "parser.tab.c"
+#line 1694 "parser.tab.c"
     break;
 
   case 19: /* expr: expr TK_OR expr  */
-#line 89 "parser.y"
+#line 90 "parser.y"
                       { (yyval.ast) = ast_create_binory(TK_OR, (yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1699 "parser.tab.c"
+#line 1700 "parser.tab.c"
     break;
 
   case 20: /* expr: lvalue  */
-#line 90 "parser.y"
+#line 91 "parser.y"
              { (yyval.ast) = (yyvsp[0].ast); }
-#line 1705 "parser.tab.c"
+#line 1706 "parser.tab.c"
     break;
 
   case 21: /* expr: TK_MINUS expr  */
-#line 91 "parser.y"
+#line 92 "parser.y"
                                  { (yyval.ast) = ast_create_unary(TK_MINUS, (yyvsp[0].ast)); }
-#line 1711 "parser.tab.c"
+#line 1712 "parser.tab.c"
     break;
 
   case 22: /* expr: lvalue TK_ASSIGN expr  */
-#line 92 "parser.y"
+#line 93 "parser.y"
                             { (yyval.ast) = ast_create_assign((yyvsp[-2].ast), (yyvsp[0].ast)); }
-#line 1717 "parser.tab.c"
+#line 1718 "parser.tab.c"
     break;
 
   case 23: /* expr: TK_IDENT TK_LPAREN exprlist TK_RPAREN  */
-#line 93 "parser.y"
+#line 94 "parser.y"
                                             { 
         ast_node_t* ident = ast_create_ident((yyvsp[-3].sym)->txt, scope_current(), yylloc.first_line, yylloc.first_column);
         (yyval.ast) = ast_create_fncall(ident, (yyvsp[-1].ast)); 
       }
-#line 1726 "parser.tab.c"
+#line 1727 "parser.tab.c"
     break;
 
   case 24: /* expr: TK_LPAREN exprseq TK_RPAREN  */
-#line 97 "parser.y"
+#line 98 "parser.y"
                                   { (yyval.ast) = (yyvsp[-1].ast); }
-#line 1732 "parser.tab.c"
+#line 1733 "parser.tab.c"
     break;
 
   case 25: /* expr: TK_IDENT TK_LBRACE fieldlist TK_RBRACE  */
-#line 98 "parser.y"
+#line 99 "parser.y"
                                              { 
         ast_node_t* ident = ast_create_ident(strdup((yyvsp[-3].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
         (yyval.ast) = ast_create_struct(ident, (yyvsp[-1].ast)); 
       }
-#line 1741 "parser.tab.c"
+#line 1742 "parser.tab.c"
     break;
 
   case 26: /* expr: TK_IDENT TK_LBRACKET expr TK_RBRACKET TK_OF expr  */
-#line 102 "parser.y"
+#line 103 "parser.y"
                                                        { 
         ast_node_t* ident = ast_create_ident(strdup((yyvsp[-5].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
         (yyval.ast) = ast_create_arrinit(ident, (yyvsp[-3].ast), (yyvsp[0].ast)); 
       }
-#line 1750 "parser.tab.c"
+#line 1751 "parser.tab.c"
     break;
 
   case 27: /* expr: TK_IF entersc expr TK_THEN expr leavesc  */
-#line 106 "parser.y"
+#line 107 "parser.y"
                                               { (yyval.ast) = ast_create_if((yyvsp[-3].ast), (yyvsp[-1].ast), NULL); }
-#line 1756 "parser.tab.c"
+#line 1757 "parser.tab.c"
     break;
 
   case 28: /* expr: TK_IF entersc expr TK_THEN expr TK_ELSE expr leavesc  */
-#line 107 "parser.y"
+#line 108 "parser.y"
                                                            { (yyval.ast) = ast_create_if((yyvsp[-5].ast), (yyvsp[-3].ast), (yyvsp[-1].ast)); }
-#line 1762 "parser.tab.c"
+#line 1763 "parser.tab.c"
     break;
 
   case 29: /* expr: TK_WHILE entersc expr TK_DO expr leavesc  */
-#line 108 "parser.y"
+#line 109 "parser.y"
                                                { (yyval.ast) = ast_create_while((yyvsp[-3].ast), (yyvsp[-1].ast)); }
-#line 1768 "parser.tab.c"
+#line 1769 "parser.tab.c"
     break;
 
   case 30: /* expr: TK_FOR entersc TK_IDENT TK_ASSIGN expr TK_TO expr TK_DO expr leavesc  */
-#line 109 "parser.y"
+#line 110 "parser.y"
                                                                            { 
         ast_node_t* ident = ast_create_ident(strdup((yyvsp[-7].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
         (yyval.ast) = ast_create_for(ident, (yyvsp[-5].ast), (yyvsp[-3].ast), (yyvsp[-1].ast)); 
       }
-#line 1777 "parser.tab.c"
+#line 1778 "parser.tab.c"
     break;
 
   case 31: /* expr: TK_BREAK  */
-#line 113 "parser.y"
+#line 114 "parser.y"
                { (yyval.ast) = ast_create_break(); }
-#line 1783 "parser.tab.c"
+#line 1784 "parser.tab.c"
     break;
 
   case 32: /* expr: TK_LET entersc declist TK_IN exprseq TK_END leavesc  */
-#line 114 "parser.y"
+#line 115 "parser.y"
                                                           { (yyval.ast) = ast_create_let((yyvsp[-4].ast), (yyvsp[-2].ast)); }
-#line 1789 "parser.tab.c"
+#line 1790 "parser.tab.c"
     break;
 
   case 33: /* exprseq: expr  */
-#line 117 "parser.y"
+#line 118 "parser.y"
               { 
     ast_node_t* exprseq = ast_create_exprseq();
     ast_append_exprseq(exprseq, (yyvsp[0].ast));
     (yyval.ast) = exprseq;
    }
-#line 1799 "parser.tab.c"
+#line 1800 "parser.tab.c"
     break;
 
   case 34: /* exprseq: exprseq TK_SEMICOLON expr  */
-#line 122 "parser.y"
+#line 123 "parser.y"
                               {
     ast_append_exprseq((yyvsp[-2].ast), (yyvsp[0].ast));
     (yyval.ast) = (yyvsp[-2].ast);
   }
-#line 1808 "parser.tab.c"
+#line 1809 "parser.tab.c"
     break;
 
   case 35: /* exprseq: %empty  */
-#line 126 "parser.y"
+#line 127 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 1814 "parser.tab.c"
+#line 1815 "parser.tab.c"
     break;
 
   case 36: /* exprlist: expr  */
-#line 129 "parser.y"
+#line 130 "parser.y"
                { 
     ast_node_t* exprlist = ast_create_exprlist();
     ast_append_exprlist(exprlist, (yyvsp[0].ast));
     (yyval.ast) = exprlist;
     }
-#line 1824 "parser.tab.c"
+#line 1825 "parser.tab.c"
     break;
 
   case 37: /* exprlist: exprlist TK_COMMA expr  */
-#line 134 "parser.y"
+#line 135 "parser.y"
                            {
     ast_append_exprlist((yyvsp[-2].ast), (yyvsp[0].ast));
     (yyval.ast) = (yyvsp[-2].ast);
   }
-#line 1833 "parser.tab.c"
+#line 1834 "parser.tab.c"
     break;
 
   case 38: /* exprlist: %empty  */
-#line 138 "parser.y"
+#line 139 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 1839 "parser.tab.c"
+#line 1840 "parser.tab.c"
     break;
 
   case 39: /* fieldlist: TK_IDENT TK_EQU expr  */
-#line 141 "parser.y"
+#line 142 "parser.y"
                                 {
       ast_node_t* fieldef = ast_create_fieldef(strdup((yyvsp[-2].sym)->txt), (yyvsp[0].ast));
       ast_node_t* fieldlist = ast_create_fieldlist();
       ast_append_fieldlist(fieldlist, fieldef);
       (yyval.ast) = fieldlist;
     }
-#line 1850 "parser.tab.c"
+#line 1851 "parser.tab.c"
     break;
 
   case 40: /* fieldlist: fieldlist TK_COMMA TK_IDENT TK_EQU expr  */
-#line 147 "parser.y"
+#line 148 "parser.y"
                                             {
     ast_node_t* fieldef = ast_create_fieldef(strdup((yyvsp[-2].sym)->txt), (yyvsp[0].ast));
     ast_append_fieldlist((yyvsp[-4].ast), fieldef);
     (yyval.ast) = (yyvsp[-4].ast);
   }
-#line 1860 "parser.tab.c"
+#line 1861 "parser.tab.c"
     break;
 
   case 41: /* fieldlist: %empty  */
-#line 152 "parser.y"
+#line 153 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 1866 "parser.tab.c"
+#line 1867 "parser.tab.c"
     break;
 
   case 42: /* lvalue: TK_IDENT index  */
-#line 155 "parser.y"
+#line 156 "parser.y"
                        {
     ast_node_t* ident = ast_create_ident(strdup((yyvsp[-1].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     (yyval.ast) = ast_create_lvalue(ident, (yyvsp[0].ast));
   }
-#line 1875 "parser.tab.c"
+#line 1876 "parser.tab.c"
     break;
 
   case 43: /* index: TK_DOT TK_IDENT index  */
-#line 161 "parser.y"
+#line 162 "parser.y"
                              {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-1].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* ident_index = ast_create_ident_index(ident);
       ast_append_index(ident_index, (yyvsp[0].ast));
       (yyval.ast) = ident_index;
     }
-#line 1886 "parser.tab.c"
+#line 1887 "parser.tab.c"
     break;
 
   case 44: /* index: TK_LBRACKET expr TK_RBRACKET index  */
-#line 167 "parser.y"
+#line 168 "parser.y"
                                        {
       ast_node_t* arr_index = ast_create_arr_index((yyvsp[-2].ast));
       ast_append_index(arr_index, (yyvsp[0].ast));
       (yyval.ast) = arr_index;
   }
-#line 1896 "parser.tab.c"
+#line 1897 "parser.tab.c"
     break;
 
   case 45: /* index: %empty  */
-#line 172 "parser.y"
+#line 173 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 1902 "parser.tab.c"
+#line 1903 "parser.tab.c"
     break;
 
   case 46: /* declist: dec  */
-#line 175 "parser.y"
+#line 176 "parser.y"
              {
     ast_node_t* declist = ast_create_declist();
     ast_append_declist(declist, (yyvsp[0].ast));
     (yyval.ast) = declist;
   }
-#line 1912 "parser.tab.c"
+#line 1913 "parser.tab.c"
     break;
 
   case 47: /* declist: declist dec  */
-#line 180 "parser.y"
+#line 181 "parser.y"
                 {
     ast_append_declist((yyvsp[-1].ast), (yyvsp[0].ast));
     (yyval.ast) = (yyvsp[-1].ast);
   }
-#line 1921 "parser.tab.c"
+#line 1922 "parser.tab.c"
     break;
 
   case 48: /* dec: typedec  */
-#line 186 "parser.y"
+#line 187 "parser.y"
              { (yyval.ast) = (yyvsp[0].ast); }
-#line 1927 "parser.tab.c"
+#line 1928 "parser.tab.c"
     break;
 
   case 49: /* dec: vardec  */
-#line 187 "parser.y"
+#line 188 "parser.y"
              { (yyval.ast) = (yyvsp[0].ast); }
-#line 1933 "parser.tab.c"
+#line 1934 "parser.tab.c"
     break;
 
   case 50: /* dec: funcdec  */
-#line 188 "parser.y"
+#line 189 "parser.y"
               { (yyval.ast) = (yyvsp[0].ast); }
-#line 1939 "parser.tab.c"
+#line 1940 "parser.tab.c"
     break;
 
   case 51: /* typedec: TK_TYPE TK_IDENT TK_EQU typeid  */
-#line 191 "parser.y"
+#line 192 "parser.y"
                                         {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstIdentTypeDec, ident, (yyvsp[0].ast));
       (yyval.ast) = typedec;
     }
-#line 1949 "parser.tab.c"
+#line 1950 "parser.tab.c"
     break;
 
   case 52: /* typedec: TK_TYPE TK_IDENT TK_EQU TK_LBRACE typefields TK_RBRACE  */
-#line 196 "parser.y"
+#line 197 "parser.y"
                                                              {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-4].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstStTypeDec, ident, (yyvsp[-1].ast));
       (yyval.ast) = typedec;
     }
-#line 1959 "parser.tab.c"
+#line 1960 "parser.tab.c"
     break;
 
   case 53: /* typedec: TK_TYPE TK_IDENT TK_EQU TK_ARRAY TK_OF typeid  */
-#line 201 "parser.y"
+#line 202 "parser.y"
                                                     {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-4].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstArrTypeDec, ident, (yyvsp[0].ast));
       (yyval.ast) = typedec;
     }
-#line 1969 "parser.tab.c"
+#line 1970 "parser.tab.c"
     break;
 
   case 54: /* typeid: TK_IDENT  */
-#line 208 "parser.y"
+#line 209 "parser.y"
                  { 
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[0].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       (yyval.ast) = ast_create_ident_typeid(ident); 
     }
-#line 1978 "parser.tab.c"
+#line 1979 "parser.tab.c"
     break;
 
   case 55: /* typeid: TK_INT  */
-#line 212 "parser.y"
+#line 213 "parser.y"
              { (yyval.ast) = ast_create_int_typeid(); }
-#line 1984 "parser.tab.c"
+#line 1985 "parser.tab.c"
     break;
 
   case 56: /* typeid: TK_STR  */
-#line 213 "parser.y"
+#line 214 "parser.y"
              { (yyval.ast) = ast_create_str_typeid(); }
-#line 1990 "parser.tab.c"
+#line 1991 "parser.tab.c"
     break;
 
   case 57: /* vardec: TK_VAR TK_IDENT TK_ASSIGN expr  */
-#line 216 "parser.y"
+#line 217 "parser.y"
                                        {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       (yyval.ast) = ast_create_vardec(ident, NULL, (yyvsp[0].ast));
     }
-#line 1999 "parser.tab.c"
+#line 2000 "parser.tab.c"
     break;
 
   case 58: /* vardec: TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr  */
-#line 220 "parser.y"
+#line 221 "parser.y"
                                                      {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-4].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       (yyval.ast) = ast_create_vardec(ident, (yyvsp[-2].ast), (yyvsp[0].ast));
     }
-#line 2008 "parser.tab.c"
+#line 2009 "parser.tab.c"
     break;
 
   case 59: /* funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr leavesc  */
-#line 226 "parser.y"
+#line 227 "parser.y"
                                                                                                          {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-8].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* fn = ast_create_fndef(ident, (yyvsp[-6].ast), (yyvsp[-3].ast), (yyvsp[-1].ast));
       (yyval.ast) = fn;
     }
-#line 2018 "parser.tab.c"
+#line 2019 "parser.tab.c"
     break;
 
   case 60: /* funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr leavesc  */
-#line 231 "parser.y"
+#line 232 "parser.y"
                                                                                       {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-6].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* fn = ast_create_fndef(ident, (yyvsp[-4].ast), NULL, (yyvsp[-1].ast));
       (yyval.ast) = fn;
     }
-#line 2028 "parser.tab.c"
+#line 2029 "parser.tab.c"
     break;
 
   case 61: /* typefields: TK_IDENT TK_COLON typeid  */
-#line 238 "parser.y"
+#line 239 "parser.y"
                                      { 
     ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     ast_node_t* typefields = ast_create_typefields(ident, (yyvsp[0].ast));
     (yyval.ast) = typefields;
   }
-#line 2038 "parser.tab.c"
+#line 2039 "parser.tab.c"
     break;
 
   case 62: /* typefields: typefields TK_COMMA TK_IDENT TK_COLON typeid  */
-#line 243 "parser.y"
+#line 244 "parser.y"
                                                  {
     ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     ast_node_t* typefields = ast_create_typefields(ident, (yyvsp[0].ast));
     ast_append_typefields((yyvsp[-4].ast), typefields);
     (yyval.ast) = (yyvsp[-4].ast);
   }
-#line 2049 "parser.tab.c"
+#line 2050 "parser.tab.c"
     break;
 
   case 63: /* typefields: %empty  */
-#line 249 "parser.y"
+#line 250 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 2055 "parser.tab.c"
+#line 2056 "parser.tab.c"
     break;
 
 
-#line 2059 "parser.tab.c"
+#line 2060 "parser.tab.c"
 
       default: break;
     }
@@ -2284,5 +2285,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 252 "parser.y"
+#line 253 "parser.y"
 

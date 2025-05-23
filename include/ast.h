@@ -3,6 +3,7 @@
 
 #include <parser.h>
 #include <scope.h>
+#include <stdlib.h>
 
 typedef enum {
   AstString,
@@ -34,8 +35,6 @@ typedef enum {
   AstIntTypeId,
   AstTypeFields,
   AstVarDec,
-  AstTypeArr,
-  AstTypeSt,
   AstDecList,
   AstFnDef,
   AstBreak,
@@ -223,4 +222,9 @@ void ast_append_declist(ast_node_t *cur, ast_node_t *src);
 ast_node_t *ast_create_fndef(ast_node_t *fnname, ast_node_t *params,
                              ast_node_t *rettype, ast_node_t *fnbody);
 ast_node_t *ast_create_break();
+
+ast_node_t *ast_get_root();
+void ast_set_root(ast_node_t *root);
+
+void ast_show_node(ast_node_t *node);
 #endif
