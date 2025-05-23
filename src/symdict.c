@@ -32,13 +32,13 @@ void symdict_add(symdict_t *dict, const char *key, symval_t *val) {
 
   symval_t *prev = NULL;
   while (cur) {
-    int curlen = strlen(cur->txt);
+    int curlen = strlen(cur->name);
     if (curlen != strlen(key)) {
       prev = cur;
       cur = cur->next;
       continue;
     }
-    if (strncmp(cur->txt, key, curlen) != 0) {
+    if (strncmp(cur->name, key, curlen) != 0) {
       prev = cur;
       cur = cur->next;
       continue;
@@ -47,7 +47,8 @@ void symdict_add(symdict_t *dict, const char *key, symval_t *val) {
     // find same key, so we update value
     cur->lineno = val->lineno;
     cur->type = val->type;
-    cur->txt = val->txt;
+    cur->name = val->name;
+    cur->clumon = val->clumon;
     return;
   }
 
@@ -63,13 +64,13 @@ void symdict_del(symdict_t *dict, const char *key) {
 
   symval_t *prev = NULL;
   while (cur) {
-    int curlen = strlen(cur->txt);
+    int curlen = strlen(cur->name);
     if (curlen != strlen(key)) {
       prev = cur;
       cur = cur->next;
       continue;
     }
-    if (strncmp(cur->txt, key, curlen) != 0) {
+    if (strncmp(cur->name, key, curlen) != 0) {
       prev = cur;
       cur = cur->next;
       continue;
@@ -89,12 +90,12 @@ symval_t *symdict_get(symdict_t *dict, const char *key) {
     return NULL;
 
   while (cur) {
-    int curlen = strlen(cur->txt);
+    int curlen = strlen(cur->name);
     if (curlen != strlen(key)) {
       cur = cur->next;
       continue;
     }
-    if (strncmp(cur->txt, key, curlen) != 0) {
+    if (strncmp(cur->name, key, curlen) != 0) {
       cur = cur->next;
       continue;
     }
@@ -109,21 +110,21 @@ void symdict_dump(symdict_t *dict) {
   for (int i = 0; i < MAX_SYMDICT_SIZE; i++) {
     cur = dict->data[i];
     while (!cur) {
-      printf("line: %d, type: %d, txt: %s\n", cur->lineno, cur->type, cur->txt);
+      printf("line: %d, type: %d, name: %s\n", cur->lineno, cur->type,
+             cur->name);
       cur = cur->next;
     }
   }
 }
 
-symval_t *symdict_create_symval(int lineno, yytoken_kind_t token_type,
-                                char *txt) {
+symval_t *symdict_create_symval(int lineno, int column, char *name) {
   symval_t *sym = (symval_t *)malloc(sizeof(symval_t));
   if (!sym) {
     simple_msg("invalid memory");
     exit(ERR_MEM);
   }
-  sym->txt = txt;
-  sym->type = token_type;
+  sym->name = name;
+  sym->clumon = column;
   sym->lineno = lineno;
   return sym;
 }

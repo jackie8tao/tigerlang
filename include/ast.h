@@ -37,6 +37,8 @@ typedef enum {
   AstTypeArr,
   AstTypeSt,
   AstDecList,
+  AstFnDef,
+  AstBreak,
 } ast_type;
 
 struct ast_node;
@@ -70,10 +72,18 @@ typedef union {
 
 typedef union {
   struct {
+    char *name;
+    scope_t *sc;
+  } ident;
+  struct {
+    struct ast_node *name;
+    struct ast_node *fields;
+  } strt;
+  struct {
     struct ast_node *type;
     struct ast_node *size;
     struct ast_node *initval;
-  } arraydef;
+  } arrdef;
   struct {
     struct ast_node *typeid;
     struct ast_node *typeval;
@@ -91,6 +101,12 @@ typedef union {
     struct ast_node *typeid;
     struct ast_node *expr;
   } vardec;
+  struct {
+    struct ast_node *fnname;
+    struct ast_node *params;
+    struct ast_node *rettype;
+    struct ast_node *fnbody;
+  } fndef;
   struct {
     int count;
     int cap;
@@ -143,7 +159,7 @@ typedef union {
       struct ast_node *ident_index;
     };
     struct ast_node *next;
-  } index;
+  } idxexpr;
   struct {
     yytoken_kind_t type;
     union {
@@ -161,14 +177,6 @@ typedef struct ast_node {
     ast_declist declist;
     ast_opstmt opstmt;
     ast_valstmt valstmt;
-    struct {
-      char *name;
-      scope_t *sc;
-    } ident;
-    struct {
-      struct ast_node *name;
-      struct ast_node *fields;
-    } st;
   };
 } ast_node_t;
 
@@ -178,7 +186,7 @@ ast_node_t *ast_create_arraydef(ast_node_t *type, ast_node_t *size,
                                 ast_node_t *initval);
 ast_node_t *ast_create_exprseq();
 void ast_append_exprseq(ast_node_t *cur, ast_node_t *src);
-ast_node_t *ast_create_ident(char *name, scope_t *sc);
+ast_node_t *ast_create_ident(char *name, scope_t *sc, int lineno, int colno);
 ast_node_t *ast_create_struct(ast_node_t *name, ast_node_t *fields);
 ast_node_t *ast_create_fncall(ast_node_t *fnname, ast_node_t *params);
 ast_node_t *ast_create_nil();
@@ -211,5 +219,8 @@ ast_node_t *ast_create_vardec(ast_node_t *ident, ast_node_t *typeid,
 ast_node_t *ast_create_typedec(ast_type type, ast_node_t *ident,
                                ast_node_t *typeval);
 ast_node_t *ast_create_declist();
-ast_node_t *ast_append_declist(ast_node_t *cur, ast_node_t *src);
+void ast_append_declist(ast_node_t *cur, ast_node_t *src);
+ast_node_t *ast_create_fndef(ast_node_t *fnname, ast_node_t *params,
+                             ast_node_t *rettype, ast_node_t *fnbody);
+ast_node_t *ast_create_break();
 #endif

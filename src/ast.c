@@ -91,16 +91,18 @@ ast_node_t *ast_create_fncall(ast_node_t *fnname, ast_node_t *params) {
 ast_node_t *ast_create_struct(ast_node_t *name, ast_node_t *fields) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
   node->type = AstStruct;
-  node->st.name = name;
-  node->st.fields = fields;
+  node->declist.strt.name = name;
+  node->declist.strt.fields = fields;
   return node;
 }
 
-ast_node_t *ast_create_ident(char *name, scope_t *sc) {
+ast_node_t *ast_create_ident(char *name, scope_t *sc, int lineno, int colno) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
   node->type = AstIdent;
-  node->ident.name = name;
-  node->ident.sc = sc;
+  node->declist.ident.name = name;
+  node->declist.ident.sc = sc;
+  symval_t *symval = symdict_create_symval(lineno, colno, name);
+  scope_add_sym(sc, symval);
   return node;
 }
 
@@ -108,9 +110,9 @@ ast_node_t *ast_create_arraydef(ast_node_t *type, ast_node_t *size,
                                 ast_node_t *initval) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
   node->type = AstArrDef;
-  node->declist.arraydef.type = type;
-  node->declist.arraydef.size = size;
-  node->declist.arraydef.initval = initval;
+  node->declist.arrdef.type = type;
+  node->declist.arrdef.size = size;
+  node->declist.arrdef.initval = initval;
   return node;
 }
 
@@ -205,14 +207,14 @@ void ast_append_fieldlist(ast_node_t *cur, ast_node_t *src) {
 ast_node_t *ast_create_ident_index(ast_node_t *ident) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
   node->type = AstIdentIndex;
-  node->valstmt.index.ident_index = ident;
+  node->valstmt.idxexpr.ident_index = ident;
   return node;
 }
 
 ast_node_t *ast_create_arr_index(ast_node_t *ival) {
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
   node->type = AstArrIndex;
-  node->valstmt.index.arr_index = ival;
+  node->valstmt.idxexpr.arr_index = ival;
   return node;
 }
 
@@ -221,7 +223,7 @@ void ast_append_index(ast_node_t *cur, ast_node_t *next) {
     simple_msg("invalid node");
     exit(ERR_ARGS);
   }
-  cur->valstmt.index.next = next;
+  cur->valstmt.idxexpr.next = next;
 }
 
 ast_node_t *ast_create_lvalue(ast_node_t *ident, ast_node_t *index) {
@@ -289,13 +291,31 @@ ast_node_t *ast_create_typedec(ast_type type, ast_node_t *ident,
   ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
   node->type = type;
   node->declist.typedec.typeid = ident;
-  node->declist.typedec.typeval = type;
+  node->declist.typedec.typeval = typeval;
   return node;
 }
 
 ast_node_t *ast_create_declist() {
   ast_stmt_init(AstDecList, declist, declist);
 }
-ast_node_t *ast_append_declist(ast_node_t *cur, ast_node_t *src) {
+
+void ast_append_declist(ast_node_t *cur, ast_node_t *src) {
   ast_stmt_append(AstDecList, declist, declist);
+}
+
+ast_node_t *ast_create_fndef(ast_node_t *fnname, ast_node_t *params,
+                             ast_node_t *rettype, ast_node_t *fnbody) {
+  ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
+  node->type = AstFnDef;
+  node->declist.fndef.fnname = fnname;
+  node->declist.fndef.params = params;
+  node->declist.fndef.rettype = rettype;
+  node->declist.fndef.fnbody = fnbody;
+  return node;
+}
+
+ast_node_t *ast_create_break() {
+  ast_node_t *node = (ast_node_t *)malloc(sizeof(ast_node_t));
+  node->type = AstBreak;
+  return node;
 }
