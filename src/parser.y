@@ -140,13 +140,15 @@ exprlist: expr {
   ;
 
 fieldlist: TK_IDENT TK_EQU expr {
-      ast_node_t* fieldef = ast_create_fieldef(strdup($1->txt), $3);
+      ast_node_t* ident = ast_create_ident(strdup($1->txt), scope_current(), yylloc.first_line, yylloc.first_column);
+      ast_node_t* fieldef = ast_create_fieldef(ident, $3);
       ast_node_t* fieldlist = ast_create_fieldlist();
       ast_append_fieldlist(fieldlist, fieldef);
       $$ = fieldlist;
     }
   | fieldlist TK_COMMA TK_IDENT TK_EQU expr {
-    ast_node_t* fieldef = ast_create_fieldef(strdup($3->txt), $5);
+    ast_node_t* ident = ast_create_ident(strdup($3->txt), scope_current(), yylloc.first_line, yylloc.first_column);
+    ast_node_t* fieldef = ast_create_fieldef(ident, $5);
     ast_append_fieldlist($1, fieldef);
     $$ = $1;
   }

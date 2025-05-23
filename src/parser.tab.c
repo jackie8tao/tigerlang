@@ -576,9 +576,9 @@ static const yytype_uint8 yyrline[] =
       81,    82,    83,    84,    85,    86,    87,    88,    89,    90,
       91,    92,    93,    94,    98,    99,   103,   107,   108,   109,
      110,   114,   115,   118,   123,   127,   130,   135,   139,   142,
-     148,   153,   156,   162,   168,   173,   176,   181,   187,   188,
-     189,   192,   197,   202,   209,   213,   214,   217,   221,   227,
-     232,   239,   244,   250
+     149,   155,   158,   164,   170,   175,   178,   183,   189,   190,
+     191,   194,   199,   204,   211,   215,   216,   219,   223,   229,
+     234,   241,   246,   252
 };
 #endif
 
@@ -1842,221 +1842,223 @@ yyreduce:
   case 39: /* fieldlist: TK_IDENT TK_EQU expr  */
 #line 142 "parser.y"
                                 {
-      ast_node_t* fieldef = ast_create_fieldef(strdup((yyvsp[-2].sym)->txt), (yyvsp[0].ast));
+      ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
+      ast_node_t* fieldef = ast_create_fieldef(ident, (yyvsp[0].ast));
       ast_node_t* fieldlist = ast_create_fieldlist();
       ast_append_fieldlist(fieldlist, fieldef);
       (yyval.ast) = fieldlist;
     }
-#line 1851 "parser.tab.c"
+#line 1852 "parser.tab.c"
     break;
 
   case 40: /* fieldlist: fieldlist TK_COMMA TK_IDENT TK_EQU expr  */
-#line 148 "parser.y"
+#line 149 "parser.y"
                                             {
-    ast_node_t* fieldef = ast_create_fieldef(strdup((yyvsp[-2].sym)->txt), (yyvsp[0].ast));
+    ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
+    ast_node_t* fieldef = ast_create_fieldef(ident, (yyvsp[0].ast));
     ast_append_fieldlist((yyvsp[-4].ast), fieldef);
     (yyval.ast) = (yyvsp[-4].ast);
   }
-#line 1861 "parser.tab.c"
+#line 1863 "parser.tab.c"
     break;
 
   case 41: /* fieldlist: %empty  */
-#line 153 "parser.y"
+#line 155 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 1867 "parser.tab.c"
+#line 1869 "parser.tab.c"
     break;
 
   case 42: /* lvalue: TK_IDENT index  */
-#line 156 "parser.y"
+#line 158 "parser.y"
                        {
     ast_node_t* ident = ast_create_ident(strdup((yyvsp[-1].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     (yyval.ast) = ast_create_lvalue(ident, (yyvsp[0].ast));
   }
-#line 1876 "parser.tab.c"
+#line 1878 "parser.tab.c"
     break;
 
   case 43: /* index: TK_DOT TK_IDENT index  */
-#line 162 "parser.y"
+#line 164 "parser.y"
                              {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-1].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* ident_index = ast_create_ident_index(ident);
       ast_append_index(ident_index, (yyvsp[0].ast));
       (yyval.ast) = ident_index;
     }
-#line 1887 "parser.tab.c"
+#line 1889 "parser.tab.c"
     break;
 
   case 44: /* index: TK_LBRACKET expr TK_RBRACKET index  */
-#line 168 "parser.y"
+#line 170 "parser.y"
                                        {
       ast_node_t* arr_index = ast_create_arr_index((yyvsp[-2].ast));
       ast_append_index(arr_index, (yyvsp[0].ast));
       (yyval.ast) = arr_index;
   }
-#line 1897 "parser.tab.c"
+#line 1899 "parser.tab.c"
     break;
 
   case 45: /* index: %empty  */
-#line 173 "parser.y"
+#line 175 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 1903 "parser.tab.c"
+#line 1905 "parser.tab.c"
     break;
 
   case 46: /* declist: dec  */
-#line 176 "parser.y"
+#line 178 "parser.y"
              {
     ast_node_t* declist = ast_create_declist();
     ast_append_declist(declist, (yyvsp[0].ast));
     (yyval.ast) = declist;
   }
-#line 1913 "parser.tab.c"
+#line 1915 "parser.tab.c"
     break;
 
   case 47: /* declist: declist dec  */
-#line 181 "parser.y"
+#line 183 "parser.y"
                 {
     ast_append_declist((yyvsp[-1].ast), (yyvsp[0].ast));
     (yyval.ast) = (yyvsp[-1].ast);
   }
-#line 1922 "parser.tab.c"
+#line 1924 "parser.tab.c"
     break;
 
   case 48: /* dec: typedec  */
-#line 187 "parser.y"
+#line 189 "parser.y"
              { (yyval.ast) = (yyvsp[0].ast); }
-#line 1928 "parser.tab.c"
+#line 1930 "parser.tab.c"
     break;
 
   case 49: /* dec: vardec  */
-#line 188 "parser.y"
+#line 190 "parser.y"
              { (yyval.ast) = (yyvsp[0].ast); }
-#line 1934 "parser.tab.c"
+#line 1936 "parser.tab.c"
     break;
 
   case 50: /* dec: funcdec  */
-#line 189 "parser.y"
+#line 191 "parser.y"
               { (yyval.ast) = (yyvsp[0].ast); }
-#line 1940 "parser.tab.c"
+#line 1942 "parser.tab.c"
     break;
 
   case 51: /* typedec: TK_TYPE TK_IDENT TK_EQU typeid  */
-#line 192 "parser.y"
+#line 194 "parser.y"
                                         {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstIdentTypeDec, ident, (yyvsp[0].ast));
       (yyval.ast) = typedec;
     }
-#line 1950 "parser.tab.c"
+#line 1952 "parser.tab.c"
     break;
 
   case 52: /* typedec: TK_TYPE TK_IDENT TK_EQU TK_LBRACE typefields TK_RBRACE  */
-#line 197 "parser.y"
+#line 199 "parser.y"
                                                              {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-4].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstStTypeDec, ident, (yyvsp[-1].ast));
       (yyval.ast) = typedec;
     }
-#line 1960 "parser.tab.c"
+#line 1962 "parser.tab.c"
     break;
 
   case 53: /* typedec: TK_TYPE TK_IDENT TK_EQU TK_ARRAY TK_OF typeid  */
-#line 202 "parser.y"
+#line 204 "parser.y"
                                                     {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-4].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* typedec = ast_create_typedec(AstArrTypeDec, ident, (yyvsp[0].ast));
       (yyval.ast) = typedec;
     }
-#line 1970 "parser.tab.c"
+#line 1972 "parser.tab.c"
     break;
 
   case 54: /* typeid: TK_IDENT  */
-#line 209 "parser.y"
+#line 211 "parser.y"
                  { 
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[0].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       (yyval.ast) = ast_create_ident_typeid(ident); 
     }
-#line 1979 "parser.tab.c"
+#line 1981 "parser.tab.c"
     break;
 
   case 55: /* typeid: TK_INT  */
-#line 213 "parser.y"
+#line 215 "parser.y"
              { (yyval.ast) = ast_create_int_typeid(); }
-#line 1985 "parser.tab.c"
+#line 1987 "parser.tab.c"
     break;
 
   case 56: /* typeid: TK_STR  */
-#line 214 "parser.y"
+#line 216 "parser.y"
              { (yyval.ast) = ast_create_str_typeid(); }
-#line 1991 "parser.tab.c"
+#line 1993 "parser.tab.c"
     break;
 
   case 57: /* vardec: TK_VAR TK_IDENT TK_ASSIGN expr  */
-#line 217 "parser.y"
+#line 219 "parser.y"
                                        {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       (yyval.ast) = ast_create_vardec(ident, NULL, (yyvsp[0].ast));
     }
-#line 2000 "parser.tab.c"
+#line 2002 "parser.tab.c"
     break;
 
   case 58: /* vardec: TK_VAR TK_IDENT TK_COLON typeid TK_ASSIGN expr  */
-#line 221 "parser.y"
+#line 223 "parser.y"
                                                      {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-4].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       (yyval.ast) = ast_create_vardec(ident, (yyvsp[-2].ast), (yyvsp[0].ast));
     }
-#line 2009 "parser.tab.c"
+#line 2011 "parser.tab.c"
     break;
 
   case 59: /* funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_COLON typeid TK_EQU expr leavesc  */
-#line 227 "parser.y"
+#line 229 "parser.y"
                                                                                                          {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-8].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* fn = ast_create_fndef(ident, (yyvsp[-6].ast), (yyvsp[-3].ast), (yyvsp[-1].ast));
       (yyval.ast) = fn;
     }
-#line 2019 "parser.tab.c"
+#line 2021 "parser.tab.c"
     break;
 
   case 60: /* funcdec: TK_FUNCTION entersc TK_IDENT TK_LPAREN typefields TK_RPAREN TK_EQU expr leavesc  */
-#line 232 "parser.y"
+#line 234 "parser.y"
                                                                                       {
       ast_node_t* ident = ast_create_ident(strdup((yyvsp[-6].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
       ast_node_t* fn = ast_create_fndef(ident, (yyvsp[-4].ast), NULL, (yyvsp[-1].ast));
       (yyval.ast) = fn;
     }
-#line 2029 "parser.tab.c"
+#line 2031 "parser.tab.c"
     break;
 
   case 61: /* typefields: TK_IDENT TK_COLON typeid  */
-#line 239 "parser.y"
+#line 241 "parser.y"
                                      { 
     ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     ast_node_t* typefields = ast_create_typefields(ident, (yyvsp[0].ast));
     (yyval.ast) = typefields;
   }
-#line 2039 "parser.tab.c"
+#line 2041 "parser.tab.c"
     break;
 
   case 62: /* typefields: typefields TK_COMMA TK_IDENT TK_COLON typeid  */
-#line 244 "parser.y"
+#line 246 "parser.y"
                                                  {
     ast_node_t* ident = ast_create_ident(strdup((yyvsp[-2].sym)->txt), scope_current(), yylloc.first_line, yylloc.first_column);
     ast_node_t* typefields = ast_create_typefields(ident, (yyvsp[0].ast));
     ast_append_typefields((yyvsp[-4].ast), typefields);
     (yyval.ast) = (yyvsp[-4].ast);
   }
-#line 2050 "parser.tab.c"
+#line 2052 "parser.tab.c"
     break;
 
   case 63: /* typefields: %empty  */
-#line 250 "parser.y"
+#line 252 "parser.y"
                   { (yyval.ast) = NULL; }
-#line 2056 "parser.tab.c"
+#line 2058 "parser.tab.c"
     break;
 
 
-#line 2060 "parser.tab.c"
+#line 2062 "parser.tab.c"
 
       default: break;
     }
@@ -2285,5 +2287,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 253 "parser.y"
+#line 255 "parser.y"
 
